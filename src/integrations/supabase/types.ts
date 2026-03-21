@@ -14,7 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      active_users: {
+        Row: {
+          blocked: boolean
+          expires_at: string | null
+          id: string
+          key: string
+          login_at: string
+          name: string
+          type: string
+        }
+        Insert: {
+          blocked?: boolean
+          expires_at?: string | null
+          id?: string
+          key: string
+          login_at?: string
+          name: string
+          type: string
+        }
+        Update: {
+          blocked?: boolean
+          expires_at?: string | null
+          id?: string
+          key?: string
+          login_at?: string
+          name?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      proxy_keys: {
+        Row: {
+          activated_at: string | null
+          created_at: string
+          duration: string
+          duration_ms: number
+          expires_at: string | null
+          id: string
+          key: string
+          status: string
+          type: string
+          used_by: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string
+          duration: string
+          duration_ms?: number
+          expires_at?: string | null
+          id?: string
+          key: string
+          status?: string
+          type: string
+          used_by?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string
+          duration?: string
+          duration_ms?: number
+          expires_at?: string | null
+          id?: string
+          key?: string
+          status?: string
+          type?: string
+          used_by?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
