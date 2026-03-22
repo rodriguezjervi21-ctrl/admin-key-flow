@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const Admin = () => {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(() => sessionStorage.getItem("admin_auth") === "true");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState<"keys" | "users" | "generate" | "stats">("generate");
@@ -43,9 +43,15 @@ const Admin = () => {
     e.preventDefault();
     if (password === "117") {
       setAuthenticated(true);
+      sessionStorage.setItem("admin_auth", "true");
     } else {
       setError("Acceso denegado");
     }
+  };
+
+  const handleLogout = () => {
+    setAuthenticated(false);
+    sessionStorage.removeItem("admin_auth");
   };
 
   const handleGenerate = async () => {
@@ -142,11 +148,10 @@ const Admin = () => {
 
           {/* Login card */}
           <div className="glass-card p-6 glow-border animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
-            <div className="flex items-center gap-2 mb-1">
-              <Terminal className="w-5 h-5 text-muted-foreground" />
-              <span className="text-sm font-mono text-muted-foreground">admin@proxy:~$</span>
+            <div className="flex items-center gap-2 mb-5">
+              <Lock className="w-5 h-5 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">Autenticación requerida</span>
             </div>
-            <p className="text-xs text-muted-foreground/60 mb-5 font-mono pl-7">authenticate --level=root</p>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -211,7 +216,7 @@ const Admin = () => {
               <p className="text-[10px] text-muted-foreground font-mono">root@proxy-server</p>
             </div>
           </div>
-          <button onClick={() => setAuthenticated(false)} className="p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors active:scale-95">
+          <button onClick={handleLogout} className="p-2 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors active:scale-95">
             <LogOut className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
