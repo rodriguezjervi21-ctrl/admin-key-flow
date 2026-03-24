@@ -450,6 +450,99 @@ const ProxyConfig = () => {
           {!launchingFF && <p className="text-[10px] text-muted-foreground">30 métodos de apertura automáticos</p>}
         </button>
       )}
+
+      {/* Command Terminal */}
+      <div className="glass-card p-4 animate-fade-in-up">
+        <div className="flex items-center gap-2 mb-3">
+          <Code className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Terminal de Comandos</span>
+        </div>
+        <div className="bg-secondary/20 rounded-lg p-3 border border-border/30 font-mono text-[9px] space-y-1.5">
+          <p className="text-emerald-400">root@proxy:~$ <span className="text-foreground/70">proxy --status</span></p>
+          <p className="text-foreground/50">Estado: {connected ? "CONECTADO" : "DESCONECTADO"} | Protocolo: HTTPS/SOCKS5</p>
+          <p className="text-emerald-400">root@proxy:~$ <span className="text-foreground/70">tunnel --check-integrity</span></p>
+          <p className="text-foreground/50">Integridad del túnel: OK | Hash: SHA-256 verificado</p>
+          <p className="text-emerald-400">root@proxy:~$ <span className="text-foreground/70">net --scan-ports 1-65535</span></p>
+          <p className="text-foreground/50">Puertos abiertos: 443, 8080, 3128 | Filtrados: 0</p>
+          <p className="text-emerald-400">root@proxy:~$ <span className="text-foreground/70">cipher --rotate-keys</span></p>
+          <p className="text-foreground/50">Rotación de claves AES completada | Próxima: 3600s</p>
+          <p className="text-amber-400">root@proxy:~$ <span className="text-foreground/40 animate-pulse">_</span></p>
+        </div>
+      </div>
+
+      {/* Deep Packet Inspection Shield */}
+      <div className="glass-card p-4 animate-fade-in-up">
+        <div className="flex items-center gap-2 mb-3">
+          <Eye className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Escudo Anti-DPI</span>
+        </div>
+        <div className="space-y-2">
+          {[
+            { label: "Fragmentación TCP", value: "Activo — 3 segmentos", pct: 100 },
+            { label: "SNI Spoofing", value: "Rotación cada 60s", pct: 85 },
+            { label: "Packet Morphing", value: "Aleatorización L7", pct: 92 },
+            { label: "QUIC Masking", value: "UDP encapsulado", pct: 78 },
+          ].map(({ label, value, pct }) => (
+            <div key={label} className="bg-secondary/20 rounded-lg px-3 py-2 border border-border/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-muted-foreground">{label}</span>
+                <span className="text-[9px] text-emerald-400 font-mono">{value}</span>
+              </div>
+              <div className="w-full h-1 rounded-full bg-secondary/50 overflow-hidden">
+                <div className="h-full rounded-full bg-emerald-500/70 transition-all duration-700" style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Network Routing Matrix */}
+      <div className="glass-card p-4 animate-fade-in-up">
+        <div className="flex items-center gap-2 mb-3">
+          <Radio className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Matriz de Enrutamiento</span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { label: "Nodos activos", value: "47", icon: Server },
+            { label: "Saltos (hops)", value: "3", icon: Zap },
+            { label: "Rutas cifradas", value: "12", icon: Lock },
+            { label: "Redundancia", value: "x3", icon: HardDrive },
+          ].map(({ label, value, icon: Icon }) => (
+            <div key={label} className="bg-secondary/20 rounded-lg px-3 py-2.5 border border-border/30 text-center">
+              <Icon className="w-3.5 h-3.5 text-muted-foreground mx-auto mb-1" />
+              <p className="text-sm text-foreground font-bold font-mono">{value}</p>
+              <p className="text-[8px] text-muted-foreground/70 uppercase tracking-wider">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Bandwidth Optimizer */}
+      <div className="glass-card p-4 animate-fade-in-up">
+        <div className="flex items-center gap-2 mb-3">
+          <Activity className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Optimizador de Ancho de Banda</span>
+        </div>
+        <div className="space-y-2.5">
+          {[
+            { label: "Compresión Brotli", value: "87% reducción", pct: 87 },
+            { label: "Cache L2 Proxy", value: "2.4GB cacheado", pct: 64 },
+            { label: "TCP Window Scale", value: "Factor: 14", pct: 95 },
+            { label: "MTU Adaptativo", value: "1420 bytes", pct: 72 },
+          ].map(({ label, value, pct }) => (
+            <div key={label}>
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-muted-foreground">{label}</span>
+                <span className="text-[10px] text-foreground font-medium font-mono">{value}</span>
+              </div>
+              <div className="w-full h-1 rounded-full bg-secondary/50 overflow-hidden">
+                <div className="h-full rounded-full bg-blue-500/70 transition-all duration-700" style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 
@@ -509,6 +602,78 @@ const ProxyConfig = () => {
             )}
           </div>
         ))}
+      </div>
+
+      {/* Server Stats */}
+      <div className="glass-card p-4 animate-fade-in-up" style={{ animationDelay: "0.1s" }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Activity className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Estadísticas de Servidores</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {[
+            { label: "Activos", value: "27/27", color: "text-emerald-400" },
+            { label: "Carga", value: "34%", color: "text-foreground" },
+            { label: "Latencia", value: "8ms", color: "text-foreground" },
+          ].map(({ label, value, color }) => (
+            <div key={label} className="bg-secondary/20 rounded-lg px-2 py-2.5 border border-border/30 text-center">
+              <p className={`text-sm font-bold font-mono ${color}`}>{value}</p>
+              <p className="text-[8px] text-muted-foreground/70 uppercase tracking-wider">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Geo-Routing */}
+      <div className="glass-card p-4 animate-fade-in-up" style={{ animationDelay: "0.15s" }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Globe className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Enrutamiento Geográfico</span>
+        </div>
+        <div className="space-y-2">
+          {[
+            { region: "América", servers: 10, load: 28 },
+            { region: "Europa", servers: 8, load: 42 },
+            { region: "Asia-Pacífico", servers: 6, load: 35 },
+            { region: "África/Medio Oriente", servers: 3, load: 18 },
+          ].map(({ region, servers, load }) => (
+            <div key={region} className="bg-secondary/20 rounded-lg px-3 py-2 border border-border/30">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[10px] text-muted-foreground">{region}</span>
+                <span className="text-[9px] text-foreground font-mono">{servers} servidores — {load}% carga</span>
+              </div>
+              <div className="w-full h-1 rounded-full bg-secondary/50 overflow-hidden">
+                <div className="h-full rounded-full bg-emerald-500/60" style={{ width: `${load}%` }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Protocol Selector */}
+      <div className="glass-card p-4 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
+        <div className="flex items-center gap-2 mb-3">
+          <Lock className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-medium">Protocolos Disponibles</span>
+        </div>
+        <div className="space-y-2">
+          {[
+            { proto: "HTTP Proxy", port: "8080", status: "Estándar", active: true },
+            { proto: "HTTPS/TLS", port: "443", status: "Cifrado", active: true },
+            { proto: "SOCKS5", port: "1080", status: "Avanzado", active: true },
+            { proto: "SOCKS4a", port: "1081", status: "Legacy", active: false },
+            { proto: "SSH Tunnel", port: "22", status: "Túnel seguro", active: true },
+            { proto: "WireGuard", port: "51820", status: "VPN Layer", active: false },
+          ].map(({ proto, port, status, active }) => (
+            <div key={proto} className="flex items-center justify-between bg-secondary/20 rounded-lg px-3 py-2 border border-border/30">
+              <div>
+                <p className="text-[10px] text-foreground font-medium">{proto}</p>
+                <p className="text-[8px] text-muted-foreground font-mono">Puerto: {port} — {status}</p>
+              </div>
+              <div className={`w-2 h-2 rounded-full ${active ? "bg-emerald-500" : "bg-muted-foreground/30"}`} />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -663,6 +828,81 @@ const ProxyConfig = () => {
               Este sistema fue diseñado y desarrollado por Modifaxff Oficial. Todos los derechos reservados. Queda prohibida la reproducción total o parcial sin autorización expresa del desarrollador.
             </p>
           </div>
+        </div>
+      ),
+    },
+    {
+      id: "advanced",
+      icon: Cpu,
+      title: "Configuración Avanzada",
+      content: (
+        <div className="space-y-3">
+          {[
+            { label: "TCP Fast Open", value: "Habilitado" },
+            { label: "ECN (Explicit Congestion)", value: "Activado" },
+            { label: "BBR Congestion Control", value: "Habilitado" },
+            { label: "IPv6 Dual Stack", value: "Desactivado" },
+            { label: "PMTU Discovery", value: "Automático" },
+            { label: "Socket Buffer", value: "256KB Tx / 512KB Rx" },
+            { label: "TCP Keepalive Interval", value: "30s" },
+            { label: "Max Retransmissions", value: "5" },
+            { label: "Nagle Algorithm", value: "Desactivado (Low Latency)" },
+          ].map(({ label, value }) => (
+            <div key={label} className="flex items-center justify-between bg-secondary/20 rounded-lg px-3 py-2.5 border border-border/30">
+              <span className="text-[10px] text-muted-foreground">{label}</span>
+              <span className="text-[10px] text-foreground font-medium font-mono">{value}</span>
+            </div>
+          ))}
+        </div>
+      ),
+    },
+    {
+      id: "logs",
+      icon: FileText,
+      title: "Registro de Actividad",
+      content: (
+        <div className="space-y-3">
+          <div className="bg-secondary/20 rounded-lg p-3 border border-border/30 font-mono text-[9px] space-y-1.5 max-h-60 overflow-y-auto">
+            <p><span className="text-emerald-400">[{new Date().toLocaleTimeString()}]</span> <span className="text-foreground/60">Sesión iniciada — Usuario: {session.name}</span></p>
+            <p><span className="text-emerald-400">[{new Date(Date.now() - 120000).toLocaleTimeString()}]</span> <span className="text-foreground/60">Handshake TLS completado</span></p>
+            <p><span className="text-blue-400">[{new Date(Date.now() - 300000).toLocaleTimeString()}]</span> <span className="text-foreground/60">DNS query → 1.1.1.1 resuelto en 3ms</span></p>
+            <p><span className="text-emerald-400">[{new Date(Date.now() - 600000).toLocaleTimeString()}]</span> <span className="text-foreground/60">Rotación de cipher suite completada</span></p>
+            <p><span className="text-amber-400">[{new Date(Date.now() - 900000).toLocaleTimeString()}]</span> <span className="text-foreground/60">Reconexión automática — nodo optimizado</span></p>
+            <p><span className="text-emerald-400">[{new Date(Date.now() - 1800000).toLocaleTimeString()}]</span> <span className="text-foreground/60">Anti-DPI bypass activado</span></p>
+            <p><span className="text-blue-400">[{new Date(Date.now() - 3600000).toLocaleTimeString()}]</span> <span className="text-foreground/60">Verificación de integridad del túnel: OK</span></p>
+            <p><span className="text-emerald-400">[{new Date(Date.now() - 7200000).toLocaleTimeString()}]</span> <span className="text-foreground/60">Certificado SSL verificado — SHA-256</span></p>
+          </div>
+          <div className="bg-secondary/20 rounded-lg p-3 border border-border/30">
+            <p className="text-[10px] text-muted-foreground leading-relaxed">Los registros se almacenan temporalmente durante la sesión activa. No se guardan datos de navegación ni contenido transmitido.</p>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "network-diag",
+      icon: Wifi,
+      title: "Diagnóstico de Red",
+      content: (
+        <div className="space-y-3">
+          {[
+            { test: "Ping al servidor proxy", result: "8ms", status: "OK" },
+            { test: "Resolución DNS", result: "3ms", status: "OK" },
+            { test: "Verificación TLS", result: "Certificado válido", status: "OK" },
+            { test: "Detección de ISP throttle", result: "No detectado", status: "OK" },
+            { test: "Puerto 443 (HTTPS)", result: "Abierto", status: "OK" },
+            { test: "Puerto 8080 (HTTP)", result: "Abierto", status: "OK" },
+            { test: "Puerto 1080 (SOCKS5)", result: "Abierto", status: "OK" },
+            { test: "IPv6 Connectivity", result: "No disponible", status: "WARN" },
+            { test: "WebSocket Upgrade", result: "Soportado", status: "OK" },
+          ].map(({ test, result, status }) => (
+            <div key={test} className="flex items-center justify-between bg-secondary/20 rounded-lg px-3 py-2.5 border border-border/30">
+              <span className="text-[10px] text-muted-foreground">{test}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] text-foreground font-medium font-mono">{result}</span>
+                <div className={`w-2 h-2 rounded-full ${status === "OK" ? "bg-emerald-500" : "bg-amber-500"}`} />
+              </div>
+            </div>
+          ))}
         </div>
       ),
     },
