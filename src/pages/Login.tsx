@@ -27,13 +27,14 @@ const Login = () => {
 
     // Accept master key "117" for quick access
     if (trimmedKey === "117") {
-      sessionStorage.setItem("proxy_session", JSON.stringify({
+      const sessionData = {
         name: trimmedName,
         key: "117",
         type: "Normal",
         expiresAt: null,
         duration: "Ilimitada",
-      }));
+      };
+      localStorage.setItem("proxy_session", JSON.stringify(sessionData));
       navigate("/proxy");
       setLoading(false);
       return;
@@ -45,13 +46,14 @@ const Login = () => {
       const activated = await activateKey(trimmedKey, trimmedName);
       if (activated) {
         await registerActiveUser(trimmedName, activated.key, activated.type, activated.expiresAt || "");
-        sessionStorage.setItem("proxy_session", JSON.stringify({
+        const sessionData = {
           name: trimmedName,
           key: activated.key,
           type: activated.type,
           expiresAt: activated.expiresAt,
           duration: activated.duration,
-        }));
+        };
+        localStorage.setItem("proxy_session", JSON.stringify(sessionData));
         navigate("/proxy");
       } else {
         setError("Error al activar la key. Intenta de nuevo.");
