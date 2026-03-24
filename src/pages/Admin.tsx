@@ -78,6 +78,10 @@ const Admin = () => {
     await reduceKeyTime(key, hours * 3600000);
     await refreshData();
   };
+  const handleAddTime = async (key: string, minutes: number) => {
+    await addKeyTime(key, minutes * 60000);
+    await refreshData();
+  };
 
   const durations = ["1 minuto", "1 día", "7 días", "30 días"];
 
