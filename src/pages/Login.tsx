@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoBackground from "@/components/VideoBackground";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -11,6 +11,20 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Auto-redirect if session exists in localStorage
+  useEffect(() => {
+    const raw = localStorage.getItem("proxy_session");
+    if (raw) {
+      const s = JSON.parse(raw);
+      // Check if not expired
+      if (!s.expiresAt || new Date(s.expiresAt).getTime() > Date.now()) {
+        navigate("/proxy");
+      } else {
+        localStorage.removeItem("proxy_session");
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,13 +41,14 @@ const Login = () => {
 
     // Accept master key "117" for quick access
     if (trimmedKey === "117") {
-      sessionStorage.setItem("proxy_session", JSON.stringify({
+      const sessionData = {
         name: trimmedName,
         key: "117",
         type: "Normal",
         expiresAt: null,
         duration: "Ilimitada",
-      }));
+      };
+      localStorage.setItem("proxy_session", JSON.stringify(sessionData));
       navigate("/proxy");
       setLoading(false);
       return;
@@ -45,13 +60,14 @@ const Login = () => {
       const activated = await activateKey(trimmedKey, trimmedName);
       if (activated) {
         await registerActiveUser(trimmedName, activated.key, activated.type, activated.expiresAt || "");
-        sessionStorage.setItem("proxy_session", JSON.stringify({
+        const sessionData = {
           name: trimmedName,
           key: activated.key,
           type: activated.type,
           expiresAt: activated.expiresAt,
           duration: activated.duration,
-        }));
+        };
+        localStorage.setItem("proxy_session", JSON.stringify(sessionData));
         navigate("/proxy");
       } else {
         setError("Error al activar la key. Intenta de nuevo.");

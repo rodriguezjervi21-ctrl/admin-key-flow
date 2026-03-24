@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import VideoBackground from "@/components/VideoBackground";
 import {
   getKeys, generateKeys, deleteKey, type ProxyKey,
-  getActiveUsers, blockUser, unblockUser, kickUser, deleteUser, reduceKeyTime, type ActiveUser
+  getActiveUsers, blockUser, unblockUser, kickUser, deleteUser, reduceKeyTime, addKeyTime, type ActiveUser
 } from "@/lib/keys";
 import {
   KeyRound, Plus, LogOut, Trash2, Copy, Check,
@@ -76,6 +76,10 @@ const Admin = () => {
   const handleDeleteUser = async (key: string) => { await deleteUser(key); await refreshData(); };
   const handleReduceTime = async (key: string, hours: number) => {
     await reduceKeyTime(key, hours * 3600000);
+    await refreshData();
+  };
+  const handleAddTime = async (key: string, minutes: number) => {
+    await addKeyTime(key, minutes * 60000);
     await refreshData();
   };
 
@@ -566,6 +570,27 @@ const Admin = () => {
                           className="px-2 py-1 rounded bg-secondary/50 border border-border text-[9px] font-mono text-muted-foreground hover:text-foreground active:scale-95 transition-all"
                         >
                           -{h}h
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-1 pt-1">
+                      <Plus className="w-3 h-3 text-emerald-400" />
+                      <span className="text-[10px] text-emerald-400 font-mono mr-1">Agregar:</span>
+                      {[
+                        { label: "+30m", mins: 30 },
+                        { label: "+1h", mins: 60 },
+                        { label: "+6h", mins: 360 },
+                        { label: "+12h", mins: 720 },
+                        { label: "+1d", mins: 1440 },
+                        { label: "+7d", mins: 10080 },
+                      ].map(({ label, mins }) => (
+                        <button
+                          key={label}
+                          onClick={() => handleAddTime(u.key, mins)}
+                          className="px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-mono text-emerald-400 hover:bg-emerald-500/20 active:scale-95 transition-all"
+                        >
+                          {label}
                         </button>
                       ))}
                     </div>
