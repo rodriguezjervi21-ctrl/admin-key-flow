@@ -210,7 +210,10 @@ const Admin = () => {
 
   return (
     <div className="relative min-h-screen pb-8">
-      <VideoBackground />
+      <div className="fixed inset-0 z-0">
+        <img src={adminBg} alt="" className="w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-background/85 backdrop-blur-sm" />
+      </div>
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
         {/* Header */}
         <div className="flex items-center justify-between mb-4 animate-fade-in-up">
