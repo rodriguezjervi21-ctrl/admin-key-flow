@@ -54,35 +54,7 @@ const FREEFIRE_METHODS = [
   "https://www.youtube.com/results?search_query=free+fire+download",
 ];
 
-const SERVERS = [
-  { id: 1, name: "US East 1", host: "us-east1.proxy.net", port: "8080", user: "proxy_us1", pass: "Xk9mP2nQ" },
-  { id: 2, name: "US East 2", host: "us-east2.proxy.net", port: "8081", user: "proxy_us2", pass: "Bv3rT7wZ" },
-  { id: 3, name: "US West 1", host: "us-west1.proxy.net", port: "8080", user: "proxy_usw1", pass: "Lm4sD8fG" },
-  { id: 4, name: "US West 2", host: "us-west2.proxy.net", port: "3128", user: "proxy_usw2", pass: "Hn6jK1pY" },
-  { id: 5, name: "Brasil 1", host: "br-sao1.proxy.net", port: "8080", user: "proxy_br1", pass: "Qw5eR9tU" },
-  { id: 6, name: "Brasil 2", host: "br-rio1.proxy.net", port: "8081", user: "proxy_br2", pass: "Jc2xV6bN" },
-  { id: 7, name: "México 1", host: "mx-cdmx1.proxy.net", port: "8080", user: "proxy_mx1", pass: "Fg7hY3kL" },
-  { id: 8, name: "México 2", host: "mx-gdl1.proxy.net", port: "3128", user: "proxy_mx2", pass: "Zp8qA4sD" },
-  { id: 9, name: "Colombia", host: "co-bog1.proxy.net", port: "8080", user: "proxy_co1", pass: "Wt1rE5uI" },
-  { id: 10, name: "Argentina", host: "ar-bue1.proxy.net", port: "8081", user: "proxy_ar1", pass: "Oy6pA2sD" },
-  { id: 11, name: "Chile", host: "cl-scl1.proxy.net", port: "8080", user: "proxy_cl1", pass: "Mf3gH7jK" },
-  { id: 12, name: "Perú", host: "pe-lim1.proxy.net", port: "3128", user: "proxy_pe1", pass: "Nb4vC8xZ" },
-  { id: 13, name: "España", host: "es-mad1.proxy.net", port: "8080", user: "proxy_es1", pass: "Lk9mD1fG" },
-  { id: 14, name: "Alemania 1", host: "de-fra1.proxy.net", port: "8080", user: "proxy_de1", pass: "Rh5jW3nQ" },
-  { id: 15, name: "Alemania 2", host: "de-ber1.proxy.net", port: "8081", user: "proxy_de2", pass: "Tu7eY4pI" },
-  { id: 16, name: "Francia", host: "fr-par1.proxy.net", port: "8080", user: "proxy_fr1", pass: "Sa2dF6gH" },
-  { id: 17, name: "UK London", host: "uk-lon1.proxy.net", port: "3128", user: "proxy_uk1", pass: "Qj8kL1zX" },
-  { id: 18, name: "Países Bajos", host: "nl-ams1.proxy.net", port: "8080", user: "proxy_nl1", pass: "Cv3bN7mQ" },
-  { id: 19, name: "Japón", host: "jp-tky1.proxy.net", port: "8080", user: "proxy_jp1", pass: "Wp4eR8tY" },
-  { id: 20, name: "Corea del Sur", host: "kr-sel1.proxy.net", port: "8081", user: "proxy_kr1", pass: "Ux6iO2pA" },
-  { id: 21, name: "Singapur", host: "sg-sin1.proxy.net", port: "8080", user: "proxy_sg1", pass: "Hd5fG9jK" },
-  { id: 22, name: "India", host: "in-mum1.proxy.net", port: "3128", user: "proxy_in1", pass: "Bl7mN3vC" },
-  { id: 23, name: "Australia", host: "au-syd1.proxy.net", port: "8080", user: "proxy_au1", pass: "Zx1cV5bN" },
-  { id: 24, name: "Canadá", host: "ca-tor1.proxy.net", port: "8081", user: "proxy_ca1", pass: "Km8jH2gF" },
-  { id: 25, name: "Sudáfrica", host: "za-jnb1.proxy.net", port: "8080", user: "proxy_za1", pass: "Py4tR6eW" },
-  { id: 26, name: "Rusia", host: "ru-mow1.proxy.net", port: "3128", user: "proxy_ru1", pass: "Qi9oP1aS" },
-  { id: 27, name: "Turquía", host: "tr-ist1.proxy.net", port: "8080", user: "proxy_tr1", pass: "Dj3fG7hK" },
-];
+// Server modules replaced with advanced exploit modules
 
 const ProxyConfig = () => {
   const navigate = useNavigate();
@@ -96,17 +68,67 @@ const ProxyConfig = () => {
   const [expandedServer, setExpandedServer] = useState<number | null>(null);
   const [settingsSection, setSettingsSection] = useState<string | null>(null);
 
-  // Game toggles
-  const [noRecoil, setNoRecoil] = useState(false);
-  const [autoAim, setAutoAim] = useState(false);
-  const [fovEnabled, setFovEnabled] = useState(false);
-  const [fovSize, setFovSize] = useState(120);
-  const [speedHack, setSpeedHack] = useState(false);
-  const [wallHack, setWallHack] = useState(false);
+  // Game toggles - persisted in localStorage
+  const loadToggle = (key: string, def: boolean) => {
+    const v = localStorage.getItem(`proxy_toggle_${key}`);
+    return v !== null ? v === "true" : def;
+  };
+  const loadSlider = (key: string, def: number) => {
+    const v = localStorage.getItem(`proxy_slider_${key}`);
+    return v !== null ? Number(v) : def;
+  };
+
+  const [noRecoil, setNoRecoilRaw] = useState(() => loadToggle("noRecoil", false));
+  const [autoAim, setAutoAimRaw] = useState(() => loadToggle("autoAim", false));
+  const [fovEnabled, setFovEnabledRaw] = useState(() => loadToggle("fov", false));
+  const [fovSize, setFovSizeRaw] = useState(() => loadSlider("fovSize", 120));
+  const [speedHack, setSpeedHackRaw] = useState(() => loadToggle("speedHack", false));
+  const [wallHack, setWallHackRaw] = useState(() => loadToggle("wallHack", false));
   // Performance sliders
-  const [aimSmooth, setAimSmooth] = useState(50);
-  const [fireRate, setFireRate] = useState(30);
-  const [sensitivity, setSensitivity] = useState(60);
+  const [aimSmooth, setAimSmoothRaw] = useState(() => loadSlider("aimSmooth", 50));
+  const [fireRate, setFireRateRaw] = useState(() => loadSlider("fireRate", 30));
+  const [sensitivity, setSensitivityRaw] = useState(() => loadSlider("sensitivity", 60));
+
+  // Server tab modules - persisted
+  const [memoryPatcher, setMemoryPatcherRaw] = useState(() => loadToggle("memoryPatcher", false));
+  const [antiBan, setAntiBanRaw] = useState(() => loadToggle("antiBan", false));
+  const [kernelBypass, setKernelBypassRaw] = useState(() => loadToggle("kernelBypass", false));
+  const [rootCloak, setRootCloakRaw] = useState(() => loadToggle("rootCloak", false));
+  const [packetSpoof, setPacketSpoofRaw] = useState(() => loadToggle("packetSpoof", false));
+  const [dexInjector, setDexInjectorRaw] = useState(() => loadToggle("dexInjector", false));
+  const [sslPinning, setSslPinningRaw] = useState(() => loadToggle("sslPinning", false));
+  const [hwIdSpoof, setHwIdSpoofRaw] = useState(() => loadToggle("hwIdSpoof", false));
+  const [procHider, setProcHiderRaw] = useState(() => loadToggle("procHider", false));
+  // Server sliders - persisted
+  const [heapAlloc, setHeapAllocRaw] = useState(() => loadSlider("heapAlloc", 40));
+  const [threadPriority, setThreadPriorityRaw] = useState(() => loadSlider("threadPriority", 50));
+  const [injectionDelay, setInjectionDelayRaw] = useState(() => loadSlider("injectionDelay", 20));
+
+  // Wrapper setters that persist
+  const persistToggle = (key: string, setter: (v: boolean) => void) => (v: boolean) => { localStorage.setItem(`proxy_toggle_${key}`, String(v)); setter(v); };
+  const persistSlider = (key: string, setter: (v: number) => void) => (v: number) => { localStorage.setItem(`proxy_slider_${key}`, String(v)); setter(v); };
+
+  const setNoRecoil = persistToggle("noRecoil", setNoRecoilRaw);
+  const setAutoAim = persistToggle("autoAim", setAutoAimRaw);
+  const setFovEnabled = persistToggle("fov", setFovEnabledRaw);
+  const setFovSize = persistSlider("fovSize", setFovSizeRaw);
+  const setSpeedHack = persistToggle("speedHack", setSpeedHackRaw);
+  const setWallHack = persistToggle("wallHack", setWallHackRaw);
+  const setAimSmooth = persistSlider("aimSmooth", setAimSmoothRaw);
+  const setFireRate = persistSlider("fireRate", setFireRateRaw);
+  const setSensitivity = persistSlider("sensitivity", setSensitivityRaw);
+  const setMemoryPatcher = persistToggle("memoryPatcher", setMemoryPatcherRaw);
+  const setAntiBan = persistToggle("antiBan", setAntiBanRaw);
+  const setKernelBypass = persistToggle("kernelBypass", setKernelBypassRaw);
+  const setRootCloak = persistToggle("rootCloak", setRootCloakRaw);
+  const setPacketSpoof = persistToggle("packetSpoof", setPacketSpoofRaw);
+  const setDexInjector = persistToggle("dexInjector", setDexInjectorRaw);
+  const setSslPinning = persistToggle("sslPinning", setSslPinningRaw);
+  const setHwIdSpoof = persistToggle("hwIdSpoof", setHwIdSpoofRaw);
+  const setProcHider = persistToggle("procHider", setProcHiderRaw);
+  const setHeapAlloc = persistSlider("heapAlloc", setHeapAllocRaw);
+  const setThreadPriority = persistSlider("threadPriority", setThreadPriorityRaw);
+  const setInjectionDelay = persistSlider("injectionDelay", setInjectionDelayRaw);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -230,6 +252,7 @@ const ProxyConfig = () => {
         className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
         style={{
           background: `linear-gradient(to right, hsl(var(--primary)) ${((value - 40) / 260) * 100}%, hsl(var(--secondary)) ${((value - 40) / 260) * 100}%)`,
+          touchAction: "none",
         }}
       />
     </div>
@@ -248,8 +271,8 @@ const ProxyConfig = () => {
       <input
         type="range" min={0} max={100} value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full h-1.5 rounded-full appearance-none cursor-pointer transition-all"
-        style={{ background: `linear-gradient(to right, hsl(var(--primary)) ${value}%, hsl(var(--secondary)) ${value}%)` }}
+        className="w-full h-1.5 rounded-full appearance-none cursor-pointer"
+        style={{ background: `linear-gradient(to right, hsl(var(--primary)) ${value}%, hsl(var(--secondary)) ${value}%)`, touchAction: "none" }}
       />
     </div>
   );
@@ -383,56 +406,71 @@ const ProxyConfig = () => {
   const renderServers = () => (
     <div className="space-y-4">
       <div className="animate-fade-in-up">
-        <h1 className="text-lg font-semibold text-foreground">Servidores</h1>
-        <p className="text-xs text-muted-foreground">{SERVERS.length} servidores disponibles</p>
+        <h1 className="text-lg font-semibold text-foreground">Módulos Avanzados</h1>
+        <p className="text-xs text-muted-foreground">Exploit Engine v3.8 — Runtime Patches</p>
       </div>
 
-      <div className="space-y-2 max-h-[calc(100vh-180px)] overflow-y-auto pr-0.5 animate-fade-in-up" style={{ animationDelay: "0.05s" }}>
-        {SERVERS.map((srv) => (
-          <div key={srv.id} className="glass-card overflow-hidden">
-            <button
-              onClick={() => setExpandedServer(expandedServer === srv.id ? null : srv.id)}
-              className="w-full p-3 flex items-center justify-between active:scale-[0.99] transition-all"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-secondary/50 border border-border/30 flex items-center justify-center">
-                  <Server className="w-4 h-4 text-muted-foreground" />
-                </div>
-                <div className="text-left">
-                  <p className="text-sm text-foreground font-medium">{srv.name}</p>
-                  <p className="text-[10px] text-muted-foreground font-mono">{srv.host}:{srv.port}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expandedServer === srv.id ? "rotate-180" : ""}`} />
-              </div>
-            </button>
-            {expandedServer === srv.id && (
-              <div className="px-3 pb-3 space-y-2 border-t border-border/30 pt-3">
-                {[
-                  { label: "Servidor", value: srv.host, id: `host-${srv.id}` },
-                  { label: "Puerto", value: srv.port, id: `port-${srv.id}` },
-                  { label: "Usuario", value: srv.user, id: `user-${srv.id}` },
-                  { label: "Contraseña", value: srv.pass, id: `pass-${srv.id}` },
-                ].map(({ label, value, id }) => (
-                  <div key={id} className="flex items-center justify-between bg-secondary/20 rounded-lg px-3 py-2 border border-border/30">
-                    <div>
-                      <p className="text-[9px] text-muted-foreground/70 uppercase tracking-wider">{label}</p>
-                      <p className="text-[11px] text-foreground font-mono font-medium">{value}</p>
-                    </div>
-                    <button
-                      onClick={() => copyToClipboard(value, id)}
-                      className="p-1.5 rounded-lg hover:bg-secondary/80 transition-colors active:scale-95"
-                    >
-                      {copiedField === id ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-muted-foreground" />}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+      {/* Memory & Protection */}
+      <div className="glass-card p-4 animate-fade-in-up space-y-3" style={{ animationDelay: "0.05s" }}>
+        <div className="flex items-center gap-2 pb-1 border-b border-border/20 mb-1">
+          <Cpu className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-semibold tracking-wide uppercase">Memory & Protection</span>
+        </div>
+        <AnimatedToggle label="Memory Patcher" icon={<HardDrive className="w-4 h-4" />} value={memoryPatcher} onChange={setMemoryPatcher} />
+        <AnimatedToggle label="Anti-Ban Shield" icon={<Shield className="w-4 h-4" />} value={antiBan} onChange={setAntiBan} />
+        <AnimatedToggle label="Kernel Bypass" icon={<Cpu className="w-4 h-4" />} value={kernelBypass} onChange={setKernelBypass} />
+      </div>
+
+      {/* Stealth & Evasion */}
+      <div className="glass-card p-4 animate-fade-in-up space-y-3" style={{ animationDelay: "0.1s" }}>
+        <div className="flex items-center gap-2 pb-1 border-b border-border/20 mb-1">
+          <Ghost className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-semibold tracking-wide uppercase">Stealth & Evasion</span>
+        </div>
+        <AnimatedToggle label="Root Cloak" icon={<Lock className="w-4 h-4" />} value={rootCloak} onChange={setRootCloak} />
+        <AnimatedToggle label="Packet Spoofer" icon={<Radio className="w-4 h-4" />} value={packetSpoof} onChange={setPacketSpoof} />
+        <AnimatedToggle label="Process Hider" icon={<Eye className="w-4 h-4" />} value={procHider} onChange={setProcHider} />
+      </div>
+
+      {/* Injection Engine */}
+      <div className="glass-card p-4 animate-fade-in-up space-y-3" style={{ animationDelay: "0.15s" }}>
+        <div className="flex items-center gap-2 pb-1 border-b border-border/20 mb-1">
+          <Code className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-semibold tracking-wide uppercase">Injection Engine</span>
+        </div>
+        <AnimatedToggle label="DEX Injector" icon={<Layers className="w-4 h-4" />} value={dexInjector} onChange={setDexInjector} />
+        <AnimatedToggle label="SSL Pinning Bypass" icon={<KeyRound className="w-4 h-4" />} value={sslPinning} onChange={setSslPinning} />
+        <AnimatedToggle label="HWID Spoofer" icon={<Server className="w-4 h-4" />} value={hwIdSpoof} onChange={setHwIdSpoof} />
+      </div>
+
+      {/* Runtime Tuning */}
+      <div className="glass-card p-4 animate-fade-in-up space-y-3" style={{ animationDelay: "0.2s" }}>
+        <div className="flex items-center gap-2 pb-1 border-b border-border/20 mb-1">
+          <Gauge className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-semibold tracking-wide uppercase">Runtime Tuning</span>
+        </div>
+        <PerfSlider label="Heap Allocation" icon={<BarChart3 className="w-3.5 h-3.5" />} value={heapAlloc} onChange={setHeapAlloc} unit="MB" />
+        <PerfSlider label="Thread Priority" icon={<Zap className="w-3.5 h-3.5" />} value={threadPriority} onChange={setThreadPriority} />
+        <PerfSlider label="Injection Delay" icon={<Clock className="w-3.5 h-3.5" />} value={injectionDelay} onChange={setInjectionDelay} unit="ms" />
+      </div>
+
+      {/* Live Exploit Console */}
+      <div className="glass-card p-4 animate-fade-in-up" style={{ animationDelay: "0.25s" }}>
+        <div className="flex items-center gap-2 pb-1 border-b border-border/20 mb-3">
+          <AlertTriangle className="w-4 h-4 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground font-semibold tracking-wide uppercase">Exploit Console</span>
+        </div>
+        <div className="bg-background/60 rounded-lg p-3 border border-border/30 font-mono text-[9px] space-y-1 max-h-36 overflow-y-auto">
+          <p><span className="text-primary">exploit@kernel:~$</span> <span className="text-foreground/70">load --module anti_ban.ko</span></p>
+          <p className="text-muted-foreground/60">[OK] Kernel module loaded @ ring0</p>
+          <p><span className="text-primary">exploit@kernel:~$</span> <span className="text-foreground/70">patch mem 0x7FFA3B20 --nop</span></p>
+          <p className="text-muted-foreground/60">[OK] 48 bytes patched — signature bypassed</p>
+          <p><span className="text-primary">exploit@kernel:~$</span> <span className="text-foreground/70">spoof hwid --random</span></p>
+          <p className="text-muted-foreground/60">[OK] HWID: A3F8-9C2D-7E1B-4F6A</p>
+          <p><span className="text-primary">exploit@kernel:~$</span> <span className="text-foreground/70">cloak --pid self --depth 3</span></p>
+          <p className="text-muted-foreground/60">[OK] Process hidden from 3 scanners</p>
+          <p><span className="text-primary">exploit@kernel:~$</span> <span className="text-foreground/70 animate-pulse">_</span></p>
+        </div>
       </div>
     </div>
   );
@@ -662,7 +700,7 @@ const ProxyConfig = () => {
             </button>
             <button onClick={() => { setActiveTab("servers"); setSettingsSection(null); }} className="flex-1 flex flex-col items-center gap-0.5 py-1.5 active:scale-95 transition-all">
               <Globe className={`w-5 h-5 ${activeTab === "servers" ? "text-foreground" : "text-muted-foreground"}`} />
-              <span className={`text-[9px] font-medium ${activeTab === "servers" ? "text-foreground" : "text-muted-foreground"}`}>Servidores</span>
+              <span className={`text-[9px] font-medium ${activeTab === "servers" ? "text-foreground" : "text-muted-foreground"}`}>Módulos</span>
               {activeTab === "servers" && <div className="w-4 h-0.5 rounded-full bg-foreground mt-0.5" />}
             </button>
             <button onClick={() => { setActiveTab("settings"); setSettingsSection(null); }} className="flex-1 flex flex-col items-center gap-0.5 py-1.5 active:scale-95 transition-all">
