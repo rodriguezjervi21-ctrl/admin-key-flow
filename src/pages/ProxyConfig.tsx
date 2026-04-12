@@ -9,7 +9,8 @@ import {
   Lock, User, KeyRound, Power, LogOut, Gamepad2, Loader2,
   Shield, Activity, Zap, Eye, ChevronRight, Cpu, HardDrive,
   Home, Settings, FileText, UserCircle, Code, AlertTriangle,
-  Copy, Check, ChevronDown, Crosshair, Target
+  Copy, Check, ChevronDown, Crosshair, Target, Gauge, Ghost,
+  Bolt, Flame, Radar, ScanLine, Layers, BarChart3
 } from "lucide-react";
 
 interface Session {
