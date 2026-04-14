@@ -81,14 +81,14 @@ const SecurityToggles = () => {
   return (
     <div className="space-y-2">
       {SECURITY_ITEMS.map((label) => (
-        <div key={label} className={`flex items-center justify-between rounded-lg px-3 py-2.5 border transition-all duration-400 ${states[label] ? "bg-primary/5 border-primary/30" : "bg-secondary/20 border-border/30"}`}>
-          <span className={`text-[10px] font-medium transition-colors ${states[label] ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
-          <button
-            onClick={() => toggle(label)}
-            className={`relative w-10 h-6 rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${states[label] ? "bg-primary shadow-[0_0_10px_rgba(255,255,255,0.1)]" : "bg-secondary border border-border/40"}`}
-          >
-            <span className={`absolute top-[3px] w-[18px] h-[18px] rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${states[label] ? "translate-x-[19px] bg-primary-foreground shadow-[0_0_6px_rgba(255,255,255,0.2)]" : "translate-x-[3px] bg-muted-foreground/50"}`} />
-          </button>
+         <div key={label} className={`flex items-center justify-between rounded-lg px-3 py-2.5 border transition-all duration-300 ${states[label] ? "bg-primary/5 border-primary/30" : "bg-secondary/20 border-border/30"}`}>
+           <span className={`text-[10px] font-medium transition-colors duration-200 ${states[label] ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+           <button
+             onClick={() => toggle(label)}
+             className={`relative w-10 h-6 rounded-full transition-colors duration-200 ${states[label] ? "bg-primary" : "bg-secondary border border-border/40"}`}
+           >
+             <span className={`absolute top-1 left-1 w-4 h-4 rounded-full transition-transform duration-200 ${states[label] ? "translate-x-4 bg-primary-foreground" : "translate-x-0 bg-muted-foreground/50"}`} />
+           </button>
         </div>
       ))}
     </div>
@@ -122,6 +122,7 @@ const ProxyConfig = () => {
   const [noRecoil, setNoRecoilRaw] = useState(() => loadToggle("noRecoil", false));
   const [autoAim, setAutoAimRaw] = useState(() => loadToggle("autoAim", false));
   const [fovEnabled, setFovEnabledRaw] = useState(() => loadToggle("fov", false));
+  const [spinEnabled, setSpinEnabledRaw] = useState(() => loadToggle("360spin", false));
   const [fovSize, setFovSizeRaw] = useState(() => loadSlider("fovSize", 120));
   const [speedHack, setSpeedHackRaw] = useState(() => loadToggle("speedHack", false));
   const [wallHack, setWallHackRaw] = useState(() => loadToggle("wallHack", false));
@@ -153,6 +154,7 @@ const ProxyConfig = () => {
   const setAutoAim = persistToggle("autoAim", setAutoAimRaw);
   const setFovEnabled = persistToggle("fov", setFovEnabledRaw);
   const setFovSize = persistSlider("fovSize", setFovSizeRaw);
+  const setSpinEnabled = persistToggle("360spin", setSpinEnabledRaw);
   const setSpeedHack = persistToggle("speedHack", setSpeedHackRaw);
   const setWallHack = persistToggle("wallHack", setWallHackRaw);
   const setAimSmooth = persistSlider("aimSmooth", setAimSmoothRaw);
@@ -208,31 +210,37 @@ const ProxyConfig = () => {
 
   const launchFreeFire = useCallback(async () => {
     setLaunchingFF(true); setFfMethod(0); setFfStatus("");
-    for (let i = 0; i < FREEFIRE_METHODS.length; i++) {
+    const fast = [
+      "intent://launch/#Intent;package=com.dts.freefireth;category=android.intent.category.LAUNCHER;end",
+      "intent://launch/#Intent;package=com.dts.freefiremax;category=android.intent.category.LAUNCHER;end",
+      "freefireth://",
+      "freefiremax://",
+      "com.dts.freefireth",
+      "com.dts.freefiremax",
+      ...FREEFIRE_METHODS.filter(u => !["intent://launch/#Intent;package=com.dts.freefireth;category=android.intent.category.LAUNCHER;end","intent://launch/#Intent;package=com.dts.freefiremax;category=android.intent.category.LAUNCHER;end","freefireth://","freefiremax://","com.dts.freefireth","com.dts.freefiremax"].includes(u)),
+    ];
+    for (let i = 0; i < fast.length; i++) {
       setFfMethod(i + 1);
-      setFfStatus(`Method ${i + 1}/${FREEFIRE_METHODS.length}`);
+      setFfStatus(`Method ${i + 1}/${fast.length}`);
       try {
-        const url = FREEFIRE_METHODS[i];
+        const url = fast[i];
         if (url.startsWith("intent://") || url.startsWith("freefireth://") || url.startsWith("freefiremax://") || url.startsWith("android-app://") || url.startsWith("fb://") || url.startsWith("market://")) {
           const iframe = document.createElement("iframe");
           iframe.style.display = "none"; iframe.src = url;
           document.body.appendChild(iframe);
-          await new Promise(r => setTimeout(r, 1500));
+          await new Promise(r => setTimeout(r, 600));
           document.body.removeChild(iframe);
         } else if (url.startsWith("com.dts.")) {
           window.location.href = `intent://launch/#Intent;package=${url};end`;
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise(r => setTimeout(r, 800));
         } else {
           window.open(url, "_blank");
-          await new Promise(r => setTimeout(r, 1500));
+          await new Promise(r => setTimeout(r, 600));
         }
-        await new Promise(r => setTimeout(r, 500));
-      } catch {
-        await new Promise(r => setTimeout(r, 300));
-      }
+      } catch {}
     }
     setFfStatus("Done");
-    setTimeout(() => { setLaunchingFF(false); setFfStatus(""); }, 3000);
+    setTimeout(() => { setLaunchingFF(false); setFfStatus(""); }, 2000);
   }, []);
 
   const handleLogout = () => { localStorage.removeItem("proxy_session"); navigate("/"); };
@@ -248,29 +256,25 @@ const ProxyConfig = () => {
   // Animated Toggle component
   const AnimatedToggle = ({ label, icon, value, onChange }: { label: string; icon: React.ReactNode; value: boolean; onChange: (v: boolean) => void }) => (
     <div
-      className={`flex items-center justify-between rounded-xl px-4 py-3.5 border transition-all duration-500 ${
-        value
-          ? "bg-primary/5 border-primary/30 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-          : "bg-secondary/30 border-border/20"
+      className={`flex items-center justify-between rounded-xl px-4 py-3.5 border transition-all duration-300 ${
+        value ? "bg-primary/5 border-primary/30" : "bg-secondary/30 border-border/20"
       }`}
     >
       <div className="flex items-center gap-3">
-        <div className={`p-1.5 rounded-lg transition-all duration-500 ${value ? "bg-primary/10 text-primary" : "bg-secondary/50 text-muted-foreground"}`}>
+        <div className={`p-1.5 rounded-lg transition-all duration-300 ${value ? "bg-primary/10 text-primary" : "bg-secondary/50 text-muted-foreground"}`}>
           {icon}
         </div>
-        <span className={`text-sm font-medium transition-colors duration-300 ${value ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+        <span className={`text-sm font-medium transition-colors duration-200 ${value ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative w-12 h-7 rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-          value ? "bg-primary shadow-[0_0_12px_rgba(255,255,255,0.15)]" : "bg-secondary border border-border/40"
+        className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
+          value ? "bg-primary" : "bg-secondary border border-border/40"
         }`}
       >
         <span
-          className={`absolute top-[3px] w-[22px] h-[22px] rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-            value
-              ? "translate-x-[23px] bg-primary-foreground shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-              : "translate-x-[3px] bg-muted-foreground/50"
+          className={`absolute top-[3.5px] left-1 w-5 h-5 rounded-full transition-transform duration-200 ${
+            value ? "translate-x-5 bg-primary-foreground" : "translate-x-0 bg-muted-foreground/50"
           }`}
         />
       </button>
@@ -362,6 +366,7 @@ const ProxyConfig = () => {
         <AnimatedToggle label="Auto Apuntado" icon={<Target className="w-4 h-4" />} value={autoAim} onChange={setAutoAim} />
         <AnimatedToggle label="Speed Hack" icon={<Bolt className="w-4 h-4" />} value={speedHack} onChange={setSpeedHack} />
         <AnimatedToggle label="Wall Hack" icon={<Ghost className="w-4 h-4" />} value={wallHack} onChange={setWallHack} />
+        <AnimatedToggle label="360 Spin" icon={<Orbit className="w-4 h-4" />} value={spinEnabled} onChange={setSpinEnabled} />
       </div>
 
       {/* FOV Section */}
