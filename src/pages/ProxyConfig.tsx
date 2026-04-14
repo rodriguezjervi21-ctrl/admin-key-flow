@@ -250,29 +250,25 @@ const ProxyConfig = () => {
   // Animated Toggle component
   const AnimatedToggle = ({ label, icon, value, onChange }: { label: string; icon: React.ReactNode; value: boolean; onChange: (v: boolean) => void }) => (
     <div
-      className={`flex items-center justify-between rounded-xl px-4 py-3.5 border transition-all duration-500 ${
-        value
-          ? "bg-primary/5 border-primary/30 shadow-[0_0_15px_rgba(255,255,255,0.05)]"
-          : "bg-secondary/30 border-border/20"
+      className={`flex items-center justify-between rounded-xl px-4 py-3.5 border transition-all duration-300 ${
+        value ? "bg-primary/5 border-primary/30" : "bg-secondary/30 border-border/20"
       }`}
     >
       <div className="flex items-center gap-3">
-        <div className={`p-1.5 rounded-lg transition-all duration-500 ${value ? "bg-primary/10 text-primary" : "bg-secondary/50 text-muted-foreground"}`}>
+        <div className={`p-1.5 rounded-lg transition-all duration-300 ${value ? "bg-primary/10 text-primary" : "bg-secondary/50 text-muted-foreground"}`}>
           {icon}
         </div>
-        <span className={`text-sm font-medium transition-colors duration-300 ${value ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
+        <span className={`text-sm font-medium transition-colors duration-200 ${value ? "text-foreground" : "text-muted-foreground"}`}>{label}</span>
       </div>
       <button
         onClick={() => onChange(!value)}
-        className={`relative w-12 h-7 rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-          value ? "bg-primary shadow-[0_0_12px_rgba(255,255,255,0.15)]" : "bg-secondary border border-border/40"
+        className={`relative w-12 h-7 rounded-full transition-colors duration-200 ${
+          value ? "bg-primary" : "bg-secondary border border-border/40"
         }`}
       >
         <span
-          className={`absolute top-[3px] w-[22px] h-[22px] rounded-full transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-            value
-              ? "translate-x-[23px] bg-primary-foreground shadow-[0_0_8px_rgba(255,255,255,0.3)]"
-              : "translate-x-[3px] bg-muted-foreground/50"
+          className={`absolute top-[3.5px] left-1 w-5 h-5 rounded-full transition-transform duration-200 ${
+            value ? "translate-x-5 bg-primary-foreground" : "translate-x-0 bg-muted-foreground/50"
           }`}
         />
       </button>
@@ -364,6 +360,7 @@ const ProxyConfig = () => {
         <AnimatedToggle label="Auto Apuntado" icon={<Target className="w-4 h-4" />} value={autoAim} onChange={setAutoAim} />
         <AnimatedToggle label="Speed Hack" icon={<Bolt className="w-4 h-4" />} value={speedHack} onChange={setSpeedHack} />
         <AnimatedToggle label="Wall Hack" icon={<Ghost className="w-4 h-4" />} value={wallHack} onChange={setWallHack} />
+        <AnimatedToggle label="360 Spin" icon={<Orbit className="w-4 h-4" />} value={spinEnabled} onChange={setSpinEnabled} />
       </div>
 
       {/* FOV Section */}
