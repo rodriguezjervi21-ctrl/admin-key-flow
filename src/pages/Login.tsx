@@ -133,7 +133,7 @@ const Login = () => {
                   placeholder="Tu nombre"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-secondary/40 border border-border/50 rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all"
+                  className="w-full bg-secondary/40 border border-border/50 rounded-lg pl-10 pr-4 py-2.5 text-base text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all"
                 />
               </div>
             </div>
@@ -146,17 +146,9 @@ const Login = () => {
                   placeholder="Ingresa tu key"
                   value={key}
                   onChange={(e) => setKey(e.target.value)}
-                  className="w-full bg-secondary/40 border border-border/50 rounded-lg pl-10 pr-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all font-mono"
+                  className="w-full bg-secondary/40 border border-border/50 rounded-lg pl-10 pr-4 py-2.5 text-base text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all font-mono"
                 />
               </div>
-              <a
-                href="https://passwor-producto.vercel.app/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center mt-2 text-[10px] text-primary hover:text-primary/80 transition-colors font-medium"
-              >
-                Obtén tu key con diamantes
-              </a>
             </div>
 
             {error && (
@@ -175,6 +167,15 @@ const Login = () => {
                 </span>
               ) : "Conectar"}
             </button>
+
+            <a
+              href="https://passwor-producto.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full bg-foreground text-background font-semibold py-2.5 rounded-lg text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center"
+            >
+              Obtén tu key con diamantes
+            </a>
           </form>
         </div>
 
