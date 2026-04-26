@@ -87,7 +87,11 @@ const BuyKey = () => {
                 <p className="text-2xl font-bold text-foreground mt-0.5">${selected.price} USD</p>
                 <p className="text-[10px] text-muted-foreground mt-0.5">Key {selected.label}</p>
               </div>
-              <PaypalButton />
+              <PaypalButton
+                amount={selected.price}
+                description={`Key Verified Proxy - ${selected.label}`}
+                onSuccess={() => navigate("/success")}
+              />
               <p className="text-[10px] text-muted-foreground/70 text-center leading-relaxed">
                 Tras el pago serás redirigido para recibir tu key automáticamente.
               </p>
