@@ -4,7 +4,7 @@ import VideoBackground from "@/components/VideoBackground";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { Shield, KeyRound, User, Lock, Fingerprint, Wifi, ShoppingCart } from "lucide-react";
 import { validateKey, activateKey, registerActiveUser } from "@/lib/keys";
-import defaultAvatar from "@/assets/default-avatar.gif";
+import defaultAvatar from "@/assets/default-avatar.jpg";
 
 const Login = () => {
   const [name, setName] = useState("");
@@ -171,11 +171,15 @@ const Login = () => {
             <button
               type="button"
               onClick={() => navigate("/buy")}
-              className="w-full bg-card/60 backdrop-blur-xl text-foreground font-semibold py-2.5 rounded-lg text-sm border border-border/40 hover:bg-card/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
-              style={{ boxShadow: "0 0 20px rgba(255,255,255,0.04), inset 0 0 20px rgba(255,255,255,0.02)" }}
+              className="relative w-full text-white font-bold py-3 rounded-lg text-sm active:scale-[0.98] transition-transform flex items-center justify-center gap-2 overflow-hidden group"
+              style={{
+                background: "linear-gradient(135deg, #f59e0b 0%, #ef4444 50%, #ec4899 100%)",
+                boxShadow: "0 0 25px rgba(239,68,68,0.55), 0 0 50px rgba(236,72,153,0.35), inset 0 1px 0 rgba(255,255,255,0.25)",
+              }}
             >
-              <ShoppingCart className="w-4 h-4" />
-              Comprar Key
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+              <ShoppingCart className="w-4 h-4 relative z-10" />
+              <span className="relative z-10 tracking-wide uppercase">Comprar Key</span>
             </button>
           </form>
         </div>
