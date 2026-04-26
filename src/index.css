@@ -141,3 +141,13 @@ input[type="range"]:active::-moz-range-thumb {
 .animate-connecting {
   animation: connecting-pulse 1.5s ease-out infinite;
 }
+
+/* PayPal hosted button container — force readable text on white bg */
+.paypal-host,
+.paypal-host * {
+  color: #1a1a1a !important;
+}
+.paypal-host a,
+.paypal-host button {
+  color: inherit !important;
+}
