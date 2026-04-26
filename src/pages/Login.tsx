@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoBackground from "@/components/VideoBackground";
 import VerifiedBadge from "@/components/VerifiedBadge";
-import { Shield, KeyRound, User, Lock, Fingerprint, Wifi } from "lucide-react";
+import { Shield, KeyRound, User, Lock, Fingerprint, Wifi, ShoppingCart } from "lucide-react";
 import { validateKey, activateKey, registerActiveUser } from "@/lib/keys";
 import defaultAvatar from "@/assets/default-avatar.gif";
 
@@ -91,7 +91,7 @@ const Login = () => {
             </div>
           </div>
           <div className="flex items-center gap-1.5 mb-1">
-            <h1 className="text-lg font-bold text-foreground tracking-tight">Conexión Proxy</h1>
+            <h1 className="text-lg font-bold text-foreground tracking-tight">La app de mi historia</h1>
             <VerifiedBadge />
           </div>
           <p className="text-[10px] text-muted-foreground/70 tracking-widest uppercase">Secure Gateway v2.4</p>
@@ -168,15 +168,15 @@ const Login = () => {
               ) : "Conectar"}
             </button>
 
-            <a
-              href="https://passwor-producto.vercel.app/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full bg-card/60 backdrop-blur-xl text-foreground font-semibold py-2.5 rounded-lg text-sm border border-border/40 hover:bg-card/80 active:scale-[0.98] transition-all flex items-center justify-center"
+            <button
+              type="button"
+              onClick={() => navigate("/buy")}
+              className="w-full bg-card/60 backdrop-blur-xl text-foreground font-semibold py-2.5 rounded-lg text-sm border border-border/40 hover:bg-card/80 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               style={{ boxShadow: "0 0 20px rgba(255,255,255,0.04), inset 0 0 20px rgba(255,255,255,0.02)" }}
             >
-              Obtén tu key con diamantes
-            </a>
+              <ShoppingCart className="w-4 h-4" />
+              Comprar Key
+            </button>
           </form>
         </div>
 
