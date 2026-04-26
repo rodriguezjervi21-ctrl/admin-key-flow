@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Login from "./pages/Login.tsx";
 import ProxyConfig from "./pages/ProxyConfig.tsx";
 import Admin from "./pages/Admin.tsx";
+import BuyKey from "./pages/BuyKey.tsx";
+import Success from "./pages/Success.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -20,6 +22,8 @@ const App = () => (
           <Route path="/" element={<Login />} />
           <Route path="/proxy" element={<ProxyConfig />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/buy" element={<BuyKey />} />
+          <Route path="/success" element={<Success />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
