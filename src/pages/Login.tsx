@@ -4,7 +4,7 @@ import VideoBackground from "@/components/VideoBackground";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { Shield, KeyRound, User, Lock, Fingerprint, Wifi, ShoppingCart } from "lucide-react";
 import { validateKey, activateKey, registerActiveUser } from "@/lib/keys";
-import defaultAvatar from "@/assets/default-avatar.jpg";
+import avatarVideo from "@/assets/avatar-video.mp4";
 
 const Login = () => {
   const [name, setName] = useState("");
@@ -83,8 +83,15 @@ const Login = () => {
         {/* Avatar + Title */}
         <div className="flex flex-col items-center mb-6">
           <div className="relative mb-3">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-border shadow-[0_0_40px_rgba(255,255,255,0.06)]">
-              <img src={defaultAvatar} alt="Profile" className="w-full h-full object-cover scale-110" />
+            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-border shadow-[0_0_40px_rgba(255,255,255,0.06)] bg-black">
+              <video
+                src={avatarVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
             </div>
             <div className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-500 border-2 border-background flex items-center justify-center">
               <Wifi className="w-3.5 h-3.5 text-background" />
