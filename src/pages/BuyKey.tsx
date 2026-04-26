@@ -88,8 +88,17 @@ const BuyKey = () => {
                 <p className="text-[10px] text-muted-foreground mt-0.5">Key {selected.label}</p>
               </div>
               <PaypalButton />
-              <p className="text-[9px] text-muted-foreground/60 text-center leading-relaxed">
+              <p className="text-[10px] text-muted-foreground/70 text-center leading-relaxed">
                 Tras el pago serás redirigido para recibir tu key automáticamente.
+              </p>
+              <button
+                onClick={() => navigate("/success")}
+                className="w-full bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 font-semibold py-2.5 rounded-lg text-xs hover:bg-emerald-500/25 active:scale-[0.98] transition-all"
+              >
+                Ya pagué — Reclamar mi key
+              </button>
+              <p className="text-[9px] text-muted-foreground/60 text-center leading-relaxed">
+                Si después de pagar la página queda en blanco, presiona el botón de arriba.
               </p>
             </div>
           ) : (
