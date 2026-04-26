@@ -46,7 +46,7 @@ const PaypalButton = () => {
   }, []);
 
   return (
-    <div className="bg-white rounded-lg p-3 min-h-[55px]">
+    <div className="bg-white rounded-lg p-3 min-h-[55px] paypal-host">
       <div ref={containerRef} id={`paypal-container-${HOSTED_BUTTON_ID}`} />
     </div>
   );
