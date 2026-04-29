@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.square-verify-payment]
 verify_jwt = false
+
+[functions.square-status]
+verify_jwt = false
