@@ -1,47 +1,64 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import VideoBackground from "@/components/VideoBackground";
-import { CheckCircle2, Copy, Check, ArrowRight, KeyRound } from "lucide-react";
-import { generateKeys, type ProxyKey } from "@/lib/keys";
+import { CheckCircle2, Copy, Check, ArrowRight, KeyRound, Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
-type Pending = {
-  id: string;
-  label: string;
-  price: number;
-  duration: string;
-  durationMs: number;
-};
+type Verified = { key: string; duration: string; type: string };
 
 const Success = () => {
   const navigate = useNavigate();
-  const [generatedKey, setGeneratedKey] = useState<ProxyKey | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [params] = useSearchParams();
+  const [verified, setVerified] = useState<Verified | null>(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const verify = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const raw = sessionStorage.getItem("pending_purchase");
+      const pending = raw ? JSON.parse(raw) : {};
+      const planId = params.get("plan") ?? pending?.planId;
+      const orderId = params.get("orderId") ?? pending?.orderId;
+
+      if (!planId || !orderId) {
+        setError("No se encontró información del pago. Si ya pagaste, contacta soporte con tu comprobante.");
+        setLoading(false);
+        return;
+      }
+
+      const { data, error: invokeErr } = await supabase.functions.invoke("square-verify-payment", {
+        body: { orderId, planId },
+      });
+
+      if (invokeErr) throw invokeErr;
+      if (data?.error) {
+        setError(data.error);
+        setLoading(false);
+        return;
+      }
+      if (!data?.key) throw new Error("Respuesta inválida del servidor");
+
+      setVerified({ key: data.key, duration: data.duration, type: data.type });
+      sessionStorage.removeItem("pending_purchase");
+    } catch (e: any) {
+      console.error(e);
+      setError(e?.message ?? "Error verificando el pago.");
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const raw = sessionStorage.getItem("pending_purchase");
-    if (!raw) {
-      setError("No se encontró información de la compra.");
-      return;
-    }
-    const pending: Pending = JSON.parse(raw);
-
-    (async () => {
-      try {
-        const type = pending.id === "perm" || pending.id === "30d" ? "Premium" : "Normal";
-        const [k] = await generateKeys(1, type as ProxyKey["type"], pending.duration);
-        setGeneratedKey(k);
-        sessionStorage.removeItem("pending_purchase");
-      } catch (e) {
-        console.error(e);
-        setError("Error generando tu key. Contacta al soporte.");
-      }
-    })();
-  }, []);
+    verify();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [retryCount]);
 
   const handleCopy = async () => {
-    if (!generatedKey) return;
-    await navigator.clipboard.writeText(generatedKey.key);
+    if (!verified) return;
+    await navigator.clipboard.writeText(verified.key);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -51,30 +68,31 @@ const Success = () => {
       <VideoBackground />
       <div className="relative z-10 w-full max-w-md animate-fade-in-up">
         <div className="glass-card p-6 glow-border text-center">
-          <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center mb-4">
-            <CheckCircle2 className="w-9 h-9 text-emerald-400" />
-          </div>
-
-          <h1 className="text-lg font-bold text-foreground mb-1">Pago exitoso</h1>
-          <p className="text-xs text-muted-foreground mb-5">Tu compra ha sido confirmada</p>
-
-          {error && (
-            <p className="text-xs text-destructive bg-destructive/10 border border-destructive/20 rounded-lg p-3 mb-4">
-              {error}
-            </p>
-          )}
-
-          {generatedKey ? (
+          {loading ? (
             <>
+              <div className="w-16 h-16 mx-auto rounded-full bg-secondary/40 border border-border/40 flex items-center justify-center mb-4">
+                <Loader2 className="w-8 h-8 text-foreground animate-spin" />
+              </div>
+              <h1 className="text-lg font-bold text-foreground mb-1">Verificando pago...</h1>
+              <p className="text-xs text-muted-foreground">Confirmando con Square, esto toma unos segundos.</p>
+            </>
+          ) : verified ? (
+            <>
+              <div className="w-16 h-16 mx-auto rounded-full bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-center mb-4">
+                <CheckCircle2 className="w-9 h-9 text-emerald-400" />
+              </div>
+              <h1 className="text-lg font-bold text-foreground mb-1">Pago confirmado</h1>
+              <p className="text-xs text-muted-foreground mb-5">Tu key ha sido generada</p>
+
               <div className="bg-secondary/40 border border-border/40 rounded-lg p-4 mb-3 text-left">
                 <div className="flex items-center gap-1.5 mb-2">
                   <KeyRound className="w-3.5 h-3.5 text-emerald-400" />
                   <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Tu key</span>
                 </div>
-                <p className="font-mono text-sm text-foreground break-all select-all">{generatedKey.key}</p>
+                <p className="font-mono text-sm text-foreground break-all select-all">{verified.key}</p>
                 <div className="flex justify-between mt-3 pt-3 border-t border-border/30 text-[10px] text-muted-foreground">
-                  <span>Tipo: <span className="text-foreground font-medium">{generatedKey.type}</span></span>
-                  <span>Duración: <span className="text-foreground font-medium">{generatedKey.duration}</span></span>
+                  <span>Tipo: <span className="text-foreground font-medium">{verified.type}</span></span>
+                  <span>Duración: <span className="text-foreground font-medium">{verified.duration}</span></span>
                 </div>
               </div>
 
@@ -82,11 +100,7 @@ const Success = () => {
                 onClick={handleCopy}
                 className="w-full bg-foreground text-background font-semibold py-2.5 rounded-lg text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mb-2"
               >
-                {copied ? (
-                  <><Check className="w-4 h-4" /> Key copiada</>
-                ) : (
-                  <><Copy className="w-4 h-4" /> Copiar Key</>
-                )}
+                {copied ? (<><Check className="w-4 h-4" /> Key copiada</>) : (<><Copy className="w-4 h-4" /> Copiar Key</>)}
               </button>
 
               <button
@@ -96,18 +110,28 @@ const Success = () => {
                 Ir al login <ArrowRight className="w-4 h-4" />
               </button>
             </>
-          ) : !error ? (
-            <div className="py-6 flex flex-col items-center gap-2">
-              <span className="w-6 h-6 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" />
-              <p className="text-xs text-muted-foreground">Generando tu key...</p>
-            </div>
           ) : (
-            <button
-              onClick={() => navigate("/")}
-              className="w-full bg-secondary/60 border border-border/40 text-foreground font-semibold py-2.5 rounded-lg text-sm"
-            >
-              Volver al login
-            </button>
+            <>
+              <div className="w-16 h-16 mx-auto rounded-full bg-destructive/15 border border-destructive/40 flex items-center justify-center mb-4">
+                <AlertCircle className="w-8 h-8 text-destructive" />
+              </div>
+              <h1 className="text-lg font-bold text-foreground mb-1">No se pudo verificar el pago</h1>
+              <p className="text-xs text-destructive bg-destructive/10 border border-destructive/20 rounded-lg p-3 my-4">
+                {error}
+              </p>
+              <button
+                onClick={() => setRetryCount((c) => c + 1)}
+                className="w-full bg-foreground text-background font-semibold py-2.5 rounded-lg text-sm hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mb-2"
+              >
+                <RefreshCw className="w-4 h-4" /> Reintentar verificación
+              </button>
+              <button
+                onClick={() => navigate("/buy")}
+                className="w-full bg-secondary/60 border border-border/40 text-foreground font-semibold py-2.5 rounded-lg text-sm hover:bg-secondary active:scale-[0.98] transition-all"
+              >
+                Volver a comprar
+              </button>
+            </>
           )}
         </div>
       </div>

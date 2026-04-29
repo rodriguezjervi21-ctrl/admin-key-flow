@@ -83,6 +83,54 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          currency: string
+          customer_name: string | null
+          duration: string
+          duration_ms: number
+          generated_key: string | null
+          id: string
+          order_id: string | null
+          payment_id: string
+          provider: string
+          raw: Json | null
+          status: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          customer_name?: string | null
+          duration: string
+          duration_ms: number
+          generated_key?: string | null
+          id?: string
+          order_id?: string | null
+          payment_id: string
+          provider?: string
+          raw?: Json | null
+          status: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          customer_name?: string | null
+          duration?: string
+          duration_ms?: number
+          generated_key?: string | null
+          id?: string
+          order_id?: string | null
+          payment_id?: string
+          provider?: string
+          raw?: Json | null
+          status?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
