@@ -7,8 +7,8 @@ const corsHeaders = {
 };
 
 const PLANS: Record<string, { label: string; amount: number; duration: string; durationMs: number; type: "Normal" | "Premium" }> = {
-  "7d": { label: "7 días", amount: 700, duration: "7 días", durationMs: 7 * 24 * 60 * 60 * 1000, type: "Normal" },
-  "30d": { label: "30 días", amount: 1500, duration: "30 días", durationMs: 30 * 24 * 60 * 60 * 1000, type: "Premium" },
+  "7d": { label: "7 días", amount: 20000, duration: "7 días", durationMs: 7 * 24 * 60 * 60 * 1000, type: "Normal" },
+  "30d": { label: "30 días", amount: 40000, duration: "30 días", durationMs: 30 * 24 * 60 * 60 * 1000, type: "Premium" },
 };
 
 function squareBaseUrl(): string {
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
       order_id: orderId,
       provider: "square",
       amount_cents: plan.amount,
-      currency: "USD",
+      currency: "HNL",
       status: "COMPLETED",
       duration: plan.duration,
       duration_ms: plan.durationMs,

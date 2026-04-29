@@ -8,13 +8,13 @@ const corsHeaders = {
 const PLANS: Record<string, { label: string; amount: number; duration: string; durationMs: number }> = {
   "7d": {
     label: "7 días",
-    amount: 700, // $7.00
+    amount: 20000, // L 200.00 (HNL en centavos)
     duration: "7 días",
     durationMs: 7 * 24 * 60 * 60 * 1000,
   },
   "30d": {
     label: "30 días",
-    amount: 1500, // $15.00
+    amount: 40000, // L 400.00 (HNL en centavos)
     duration: "30 días",
     durationMs: 30 * 24 * 60 * 60 * 1000,
   },
@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       idempotency_key: idempotencyKey,
       quick_pay: {
         name: `Boykaffx7 APP — Key ${plan.label}`,
-        price_money: { amount: plan.amount, currency: "USD" },
+        price_money: { amount: plan.amount, currency: "HNL" },
         location_id: locationId,
       },
       checkout_options: {
