@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoBackground from "@/components/VideoBackground";
-import { ArrowLeft, Check, Clock, Loader2, CreditCard, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Check, Clock, Loader2, CreditCard, ShieldCheck, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type PlanId = "7d" | "30d";
@@ -18,9 +18,35 @@ const BuyKey = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [paymentsAvailable, setPaymentsAvailable] = useState(false);
+  const [statusReason, setStatusReason] = useState("");
+
+  const checkStatus = async () => {
+    setStatusLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("square-status", { body: {} });
+      if (error) throw error;
+      setPaymentsAvailable(Boolean(data?.available));
+      setStatusReason(data?.reason ?? "");
+    } catch (e) {
+      console.error(e);
+      setPaymentsAvailable(false);
+      setStatusReason("No se pudo verificar el estado del sistema de pagos");
+    }
+    setStatusLoading(false);
+  };
+
+  useEffect(() => {
+    checkStatus();
+  }, []);
 
   const handleCheckout = async () => {
     setError("");
+    if (!paymentsAvailable) {
+      setError("El sistema de pagos no está disponible en este momento");
+      return;
+    }
     if (!name.trim()) {
       setError("Ingresa tu nombre antes de continuar.");
       return;
@@ -78,18 +104,46 @@ const BuyKey = () => {
             </p>
           </div>
 
+          {statusLoading ? (
+            <div className="bg-secondary/40 border border-border/40 rounded-lg p-4 mb-4 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+              <Loader2 className="w-4 h-4 animate-spin" /> Verificando sistema de pagos...
+            </div>
+          ) : !paymentsAvailable ? (
+            <div className="bg-amber-500/10 border border-amber-500/40 rounded-lg p-4 mb-4">
+              <div className="flex items-start gap-2 mb-2">
+                <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-xs font-semibold text-amber-300">Pagos temporalmente no disponibles</p>
+                  <p className="text-[11px] text-amber-200/80 mt-1">
+                    El sistema de pagos no está disponible en este momento. Vuelve a intentarlo más tarde.
+                  </p>
+                  {statusReason && (
+                    <p className="text-[10px] text-muted-foreground mt-1.5 italic">Detalle: {statusReason}</p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={checkStatus}
+                className="w-full mt-2 bg-secondary/60 border border-border/40 text-foreground text-xs py-2 rounded-md hover:bg-secondary transition-all"
+              >
+                Reintentar
+              </button>
+            </div>
+          ) : null}
+
           <div className="grid grid-cols-2 gap-2.5 mb-5">
             {PLANS.map((opt) => {
               const isActive = selected.id === opt.id;
               return (
                 <button
                   key={opt.id}
-                  onClick={() => setSelected(opt)}
+                  onClick={() => paymentsAvailable && setSelected(opt)}
+                  disabled={!paymentsAvailable}
                   className={`relative p-3 rounded-lg border transition-all text-left ${
                     isActive
                       ? "bg-foreground/10 border-foreground/60"
                       : "bg-secondary/40 border-border/40 hover:border-border"
-                  }`}
+                  } ${!paymentsAvailable ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {opt.tag && (
                     <span className="absolute -top-2 left-2 text-[8px] font-bold bg-emerald-500 text-background px-1.5 py-0.5 rounded uppercase tracking-wider">
@@ -120,8 +174,9 @@ const BuyKey = () => {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              disabled={!paymentsAvailable}
               placeholder="Para registrar tu key"
-              className="w-full bg-secondary/40 border border-border/50 rounded-lg px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all"
+              className="w-full bg-secondary/40 border border-border/50 rounded-lg px-3 py-2.5 text-base text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -139,16 +194,18 @@ const BuyKey = () => {
 
           <button
             onClick={handleCheckout}
-            disabled={loading}
+            disabled={loading || !paymentsAvailable || statusLoading}
             className="w-full bg-foreground text-background font-semibold py-3 rounded-lg text-sm hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" /> Redirigiendo...
               </>
+            ) : !paymentsAvailable ? (
+              <>Pagos no disponibles</>
             ) : (
               <>
-                <CreditCard className="w-4 h-4" /> Pagar ${selected.price} con Square
+                <CreditCard className="w-4 h-4" /> Pagar L {selected.price} con Square
               </>
             )}
           </button>
