@@ -1,0 +1,1 @@
+drop policy if exists "Public can insert transactions" on public.transactions;
