@@ -1,4 +1,7 @@
 project_id = "snwuzldwstggcnlhiifi"
 
-[functions.paypal-config]
+[functions.square-create-checkout]
+verify_jwt = false
+
+[functions.square-verify-payment]
 verify_jwt = false
