@@ -105,8 +105,8 @@ const BuyKey = () => {
                     <Clock className="w-3.5 h-3.5 text-emerald-400" />
                     <span className="text-xs font-semibold text-foreground">{opt.label}</span>
                   </div>
-                  <div className="text-lg font-bold text-foreground">${opt.price}</div>
-                  <div className="text-[9px] text-muted-foreground uppercase tracking-wider">USD</div>
+                  <div className="text-lg font-bold text-foreground">L {opt.price}</div>
+                  <div className="text-[9px] text-muted-foreground uppercase tracking-wider">HNL</div>
                 </button>
               );
             })}
@@ -127,7 +127,7 @@ const BuyKey = () => {
 
           <div className="bg-secondary/30 border border-border/40 rounded-lg p-3 text-center mb-3">
             <p className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">Total a pagar</p>
-            <p className="text-2xl font-bold text-foreground mt-0.5">${selected.price} USD</p>
+            <p className="text-2xl font-bold text-foreground mt-0.5">L {selected.price} HNL</p>
             <p className="text-[10px] text-muted-foreground mt-0.5">Key {selected.label}</p>
           </div>
 
