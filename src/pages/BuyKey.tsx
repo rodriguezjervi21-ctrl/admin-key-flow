@@ -8,8 +8,8 @@ type PlanId = "7d" | "30d";
 type Plan = { id: PlanId; label: string; price: number; duration: string; tag?: string };
 
 const PLANS: Plan[] = [
-  { id: "7d", label: "7 días", price: 7, duration: "7 días" },
-  { id: "30d", label: "30 días", price: 15, duration: "30 días", tag: "Mejor valor" },
+  { id: "7d", label: "7 días", price: 200, duration: "7 días" },
+  { id: "30d", label: "30 días", price: 400, duration: "30 días", tag: "Mejor valor" },
 ];
 
 const BuyKey = () => {
