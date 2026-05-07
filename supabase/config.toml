@@ -1,10 +1,13 @@
 project_id = "snwuzldwstggcnlhiifi"
 
-[functions.square-create-checkout]
+[functions.submit-payment-proof]
 verify_jwt = false
 
-[functions.square-verify-payment]
+[functions.telegram-webhook]
 verify_jwt = false
 
-[functions.square-status]
+[functions.get-order-status]
+verify_jwt = false
+
+[functions.send-key-email]
 verify_jwt = false
