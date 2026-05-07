@@ -44,6 +44,57 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_orders: {
+        Row: {
+          ai_validation: Json | null
+          amount_usd: number
+          assigned_key: string | null
+          created_at: string
+          email: string
+          email_sent_at: string | null
+          email_sent_attempts: number
+          id: string
+          plan_duration: string
+          receipt_url: string | null
+          rejection_reason: string | null
+          status: string
+          telegram_message_id: number | null
+          updated_at: string
+        }
+        Insert: {
+          ai_validation?: Json | null
+          amount_usd: number
+          assigned_key?: string | null
+          created_at?: string
+          email: string
+          email_sent_at?: string | null
+          email_sent_attempts?: number
+          id?: string
+          plan_duration: string
+          receipt_url?: string | null
+          rejection_reason?: string | null
+          status?: string
+          telegram_message_id?: number | null
+          updated_at?: string
+        }
+        Update: {
+          ai_validation?: Json | null
+          amount_usd?: number
+          assigned_key?: string | null
+          created_at?: string
+          email?: string
+          email_sent_at?: string | null
+          email_sent_attempts?: number
+          id?: string
+          plan_duration?: string
+          receipt_url?: string | null
+          rejection_reason?: string | null
+          status?: string
+          telegram_message_id?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       proxy_keys: {
         Row: {
           activated_at: string | null
