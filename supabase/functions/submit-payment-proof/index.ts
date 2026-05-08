@@ -13,14 +13,16 @@ async function aiValidateReceipt(imageUrl: string, expectedAmount: number): Prom
   recipient_match: boolean;
   reason: string;
 }> {
-  const prompt = `Analyze this image carefully. It should be a screenshot of a PayPal payment confirmation.
+  const prompt = `Analiza esta imagen. Debería ser una captura de pantalla de PayPal mostrando un pago.
 
-Verify ALL these conditions:
-1. Is this a REAL PayPal payment confirmation screenshot (not a fake, edited, or unrelated image)?
-2. Does the amount paid equal exactly $${expectedAmount} USD?
-3. Is the recipient "ModifaxffLopez" or "Modifaxff Lopez" (PayPal.me/ModifaxffLopez)?
+Tu trabajo es un FILTRO PERMISIVO. Solo bloquea si claramente NO es PayPal. Detalles menores (idioma, recorte, calidad, fecha, formato del nombre) NO son motivo de rechazo. La decisión final la toma un administrador humano.
 
-Respond ONLY with a JSON object using this exact tool call.`;
+Reglas:
+1. is_paypal_screenshot = true si la imagen muestra una interfaz de PayPal real (logo, layout, tipografía, colores típicos de PayPal). Acepta cualquier idioma. Acepta capturas de la app móvil, web, email de confirmación o PayPal.me. Solo marca false si claramente NO es PayPal (otra app, foto sin relación, imagen genérica, screenshot evidentemente falso/editado de forma grosera).
+2. amount_match = true si aparece un monto cercano a $${expectedAmount} USD. Acepta variaciones razonables: símbolos ($, US$, USD), separadores (4.00, 4,00, 4), montos exactos o muy próximos. Solo false si el monto visible es claramente distinto (ej: $1 cuando se esperaba $15).
+3. recipient_match = true si aparece "Modifaxff", "ModifaxffLopez", "Modifaxff Lopez" o variantes con/sin espacios/mayúsculas. Si el destinatario no es legible pero todo lo demás luce correcto, marca true (el admin verificará). Solo false si claramente se ve OTRO destinatario distinto.
+
+En caso de duda, sé permisivo y deja pasar. Responde con la tool call.`;
 
   const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
