@@ -59,6 +59,75 @@ Deno.serve(async (req) => {
   const update = await req.json().catch(() => null);
   if (!update) return new Response(JSON.stringify({ ok: true }));
 
+  const supabaseEarly = createClient(SUPABASE_URL, SERVICE_KEY);
+
+  // ---- Text command handler: /enviarkey [orderId] ----
+  const msg = update.message;
+  if (msg?.text && typeof msg.text === "string") {
+    const fromId = String(msg.from?.id || "");
+    const chatId = msg.chat?.id;
+    const text = msg.text.trim();
+
+    if (text.startsWith("/enviarkey") || text.startsWith("/start")) {
+      if (fromId !== String(TELEGRAM_ADMIN_ID)) {
+        await tg("sendMessage", { chat_id: chatId, text: "No autorizado." });
+        return new Response(JSON.stringify({ ok: true }));
+      }
+
+      if (text.startsWith("/start")) {
+        await tg("sendMessage", { chat_id: chatId, text: "Bot admin activo.\n\nComandos:\n/enviarkey - reenviar la última key aprobada\n/enviarkey <orderId> - reenviar key de una orden específica" });
+        return new Response(JSON.stringify({ ok: true }));
+      }
+
+      const parts = text.split(/\s+/);
+      const arg = parts[1];
+      let order: any = null;
+      if (arg) {
+        const { data } = await supabaseEarly.from("payment_orders").select("*").eq("id", arg).maybeSingle();
+        order = data;
+      } else {
+        const { data } = await supabaseEarly
+          .from("payment_orders")
+          .select("*")
+          .eq("status", "APPROVED")
+          .not("assigned_key", "is", null)
+          .order("updated_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        order = data;
+      }
+
+      if (!order) {
+        await tg("sendMessage", { chat_id: chatId, text: "No se encontró ninguna orden aprobada." });
+        return new Response(JSON.stringify({ ok: true }));
+      }
+      if (order.status !== "APPROVED" || !order.assigned_key) {
+        await tg("sendMessage", { chat_id: chatId, text: `Orden ${order.id} no está aprobada o sin key.` });
+        return new Response(JSON.stringify({ ok: true }));
+      }
+
+      // Reset attempts so manual resend can run up to 4 more times
+      await supabaseEarly.from("payment_orders").update({ email_sent_attempts: 0 }).eq("id", order.id);
+
+      let ok = false;
+      let err = "";
+      try {
+        const r = await supabaseEarly.functions.invoke("send-key-email", { body: { orderId: order.id } });
+        if (r.error) err = r.error.message || "error";
+        else if (r.data?.ok) ok = true;
+        else err = r.data?.error || "";
+      } catch (e) {
+        err = String(e);
+      }
+
+      const reply = ok
+        ? `Reenvío manual OK\nOrden: ${order.id}\nEmail: ${order.email}\nKey: ${order.assigned_key}`
+        : `Reenvío manual FALLÓ\nOrden: ${order.id}\nEmail: ${order.email}\nKey: ${order.assigned_key}\nError: ${err}`;
+      await tg("sendMessage", { chat_id: chatId, text: reply });
+      return new Response(JSON.stringify({ ok: true }));
+    }
+  }
+
   const cb = update.callback_query;
   if (!cb) return new Response(JSON.stringify({ ok: true }));
 
@@ -74,7 +143,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: true }));
   }
 
-  const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+  const supabase = supabaseEarly;
 
   const { data: order } = await supabase
     .from("payment_orders")
