@@ -58,7 +58,9 @@ export type Database = {
           receipt_url: string | null
           rejection_reason: string | null
           status: string
+          telegram_chat_id: number | null
           telegram_message_id: number | null
+          telegram_user_id: number | null
           updated_at: string
         }
         Insert: {
@@ -74,7 +76,9 @@ export type Database = {
           receipt_url?: string | null
           rejection_reason?: string | null
           status?: string
+          telegram_chat_id?: number | null
           telegram_message_id?: number | null
+          telegram_user_id?: number | null
           updated_at?: string
         }
         Update: {
@@ -90,7 +94,9 @@ export type Database = {
           receipt_url?: string | null
           rejection_reason?: string | null
           status?: string
+          telegram_chat_id?: number | null
           telegram_message_id?: number | null
+          telegram_user_id?: number | null
           updated_at?: string
         }
         Relationships: []
@@ -131,6 +137,51 @@ export type Database = {
           status?: string
           type?: string
           used_by?: string | null
+        }
+        Relationships: []
+      }
+      telegram_admin_logs: {
+        Row: {
+          action: string
+          admin_id: number
+          created_at: string
+          details: Json | null
+          id: string
+          target: string | null
+        }
+        Insert: {
+          action: string
+          admin_id: number
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target?: string | null
+        }
+        Update: {
+          action?: string
+          admin_id?: number
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target?: string | null
+        }
+        Relationships: []
+      }
+      telegram_links: {
+        Row: {
+          email: string
+          linked_at: string
+          telegram_user_id: number
+        }
+        Insert: {
+          email: string
+          linked_at?: string
+          telegram_user_id: number
+        }
+        Update: {
+          email?: string
+          linked_at?: string
+          telegram_user_id?: number
         }
         Relationships: []
       }
